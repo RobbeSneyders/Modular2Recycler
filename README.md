@@ -20,7 +20,7 @@ Create a new **Adapter that extends UndoAdapter**:
 ```
 public class MyAdapter extends UndoAdapter<MyViewHolder> {
 
-    public MyAdapter(Context context, List<UndoItem> list, View rootView, RecyclerView recycler, String itemName, boolean withHeader) {
+    public MyAdapter(Context context, List<UndoItem> list, View rootView, RecyclerView recycler, boolean withHeader) {
         super(context, list, rootView, recycler, itemName, withHeader);
         // Set your swipe directions. You can set left, right or both.
         setSwipeLeft(Color.RED, context.getDrawable(R.drawable.ic_delete), "Item removed");

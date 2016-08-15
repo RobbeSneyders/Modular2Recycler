@@ -3,12 +3,9 @@ package com.cuttingedge.undorecycler;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.design.widget.Snackbar;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.Adapter;
 import android.support.v7.widget.RecyclerView.ViewHolder;
@@ -42,8 +39,6 @@ public abstract class UndoAdapter<VH extends ViewHolder> extends Adapter<VH> {
 
     private View rootView;
 
-    private String itemName;
-
     private Context context;
 
     //Used for animating header without red background when last shortcut of type gets deleted
@@ -61,11 +56,18 @@ public abstract class UndoAdapter<VH extends ViewHolder> extends Adapter<VH> {
      * @param itemName Text used in snackbar: "'itemName' removed".
      * @param withHeaders Use headers if true
      */
-    public UndoAdapter(Context context, List<UndoItem> list, View rootView, RecyclerView recycler, String itemName, boolean withHeaders) {
+    /**
+     * Adapter with full functionality.
+     *
+     * @param list List of UndoItems. This list should be sorted alphabetically.
+     * @param rootView Root view used for the creation of a snackbar.
+     * @param recycler Recycler for which this adapter is used
+     * @param withHeaders Use headers if true
+     */
+    public UndoAdapter(Context context, List<UndoItem> list, View rootView, RecyclerView recycler, boolean withHeaders) {
         this.context = context;
         this.list = list;
         this.rootView = rootView;
-        this.itemName = itemName;
 
         if (withHeaders)
             insertHeaders();
@@ -234,34 +236,40 @@ public abstract class UndoAdapter<VH extends ViewHolder> extends Adapter<VH> {
      *
      * @param position Position of item to be removed.
      */
-    public void pendingRemoval(int position) {
+    public void pendingRemoval(int position, int swipeDir) {
         lastWasUndo = false;
         pendingRemovalItem = list.get(position);
         pendingRemovalPosition = position;
+
         if (getItemViewType(position - 1) == TYPE_HEADER &&
                 (position == list.size() - 1 || getItemViewType(position + 1) == TYPE_HEADER)) {
             pendingRemovalHeader = list.get(position - 1);
+            list.remove(position);
             list.remove(position - 1);
-            notifyItemRemoved(position -1);
-            list.remove(position - 1);
-            notifyItemRemoved(position -1);
+            notifyItemRangeRemoved(position -1, 2);
         }
         else {
             pendingRemovalHeader = null;
             list.remove(position);
             notifyItemRemoved(position);
         }
-        remove(pendingRemovalItem.object);
 
-        showSnackbar();
+        if (swipeDir == ItemTouchHelper.LEFT) {
+            swipedLeft(pendingRemovalItem.object);
+            showSnackbar(leftMessage);
+        }
+        else if (swipeDir == ItemTouchHelper.RIGHT){
+            swipedRight(pendingRemovalItem.object);
+            showSnackbar(rightMessage);
+        }
     }
 
     /**
      * Show snackbar with undo button.
      */
-    private void showSnackbar() {
+    private void showSnackbar(String message) {
         final Snackbar snackBar = Snackbar.make(rootView,
-                itemName + " removed", Snackbar.LENGTH_LONG);
+                message, Snackbar.LENGTH_LONG);
 
         snackBar.setAction("Undo", new View.OnClickListener() {
             @Override
@@ -294,11 +302,20 @@ public abstract class UndoAdapter<VH extends ViewHolder> extends Adapter<VH> {
     }
 
     /**
-     * Called when an item needs to be removed from the database.
+     * Called when an item is swiped left.
      *
-     * @param removeItem Item to remove from database.
+     * @param swipedItem Item that was swiped.
      */
-    protected abstract void remove(Object removeItem);
+    protected abstract void swipedLeft(Object swipedItem);
+
+
+    /**
+     * Called when an item is swiped Right.
+     *
+     * @param swipedItem Item that was swiped.
+     */
+    protected abstract void swipedRight(Object swipedItem);
+
 
     /**
      * Called after undo, when an item needs to be readded to the database.
@@ -308,111 +325,166 @@ public abstract class UndoAdapter<VH extends ViewHolder> extends Adapter<VH> {
     protected abstract void readd(Object readdItem);
 
     /**
-     * This is the standard support library way of implementing "swipe to delete" feature. You can do custom drawing in onChildDraw method
-     * but whatever you draw will disappear once the swipe is over, and while the items are animating to their new position the recycler view
-     * background will be visible. That is rarely a desired effect.
+     * Sets up the ItemTouchHelper and attaches it to the RecyclerView.
      */
     private void setUpItemTouchHelper(RecyclerView recycler) {
+        ItemTouchHelper mItemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        mItemTouchHelper.attachToRecyclerView(recycler);
+    }
 
-        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+    private Drawable leftBackground;
+    private Drawable rightBackground;
+    private Drawable background;
+    private Drawable leftMark;
+    private Drawable rightMark;
+    private String leftMessage;
+    private String rightMessage;
 
-            // we want to cache these and not allocate anything repeatedly in the onChildDraw method
-            Drawable background;
-            Drawable xMark;
-            int xMarkMargin;
-            boolean initiated;
+    /**
+     * Make items swipeable to the left.
+     *
+     * @param color Color used for background behind swiped item.
+     * @param icon Icon shown behind swiped item.
+     * @param message Message shown in snackbar when item gets swiped.
+     */
+    protected void setSwipeLeft(int color, Drawable icon, String message) {
+        if (leftBackground != null) {
+            simpleItemTouchCallback.setDefaultSwipeDirs(ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
+        }
+        else {
+            simpleItemTouchCallback.setDefaultSwipeDirs(ItemTouchHelper.LEFT);
+        }
+        rightBackground = new ColorDrawable(color);
+        rightMark = icon;
+        leftMessage = message;
+    }
 
-            private void init() {
-                background = new ColorDrawable(Color.RED);
-                xMark = ContextCompat.getDrawable(context, R.drawable.ic_delete_white_24px);
-                xMark.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
-                xMarkMargin = (int) context.getResources().getDimension(R.dimen.ic_clear_margin);
-                initiated = true;
+    /**
+     * Make items swipeable to the right.
+     *
+     * @param color Color used for background behind swiped item.
+     * @param icon Icon shown behind swiped item.
+     * @param message Message shown in snackbar when item gets swiped.
+     */
+    protected void setSwipeRight(int color, Drawable icon, String message) {
+        if (leftBackground != null) {
+            simpleItemTouchCallback.setDefaultSwipeDirs(ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
+        }
+        else {
+            simpleItemTouchCallback.setDefaultSwipeDirs(ItemTouchHelper.RIGHT);
+        }
+        leftBackground = new ColorDrawable(color);
+        leftMark = icon;
+        rightMessage = message;
+    }
+
+    /**
+     * Callback used in ItemTouchHelper to draw a background behind the swiped item.
+     */
+    ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, 0) {
+
+        // we want to cache these and not allocate anything repeatedly in the onChildDraw method
+        int xMarkMargin;
+        boolean initiated;
+
+        private void init() {
+            xMarkMargin = (int) context.getResources().getDimension(R.dimen.ic_clear_margin);
+            initiated = true;
+        }
+
+        // not important, we don't want drag & drop
+        @Override
+        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+            return false;
+        }
+
+        @Override
+        public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+            int position = viewHolder.getAdapterPosition();
+            if (recyclerView.getAdapter().getItemViewType(position) == TYPE_HEADER)
+                return 0;
+
+            return super.getSwipeDirs(recyclerView, viewHolder);
+        }
+
+        @Override
+        public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+            int swipedPosition = viewHolder.getAdapterPosition();
+            headerHeight = 0;
+            if (swipeDir == ItemTouchHelper.LEFT) {
+                background = rightBackground;
+            }
+            else if (swipeDir == ItemTouchHelper.RIGHT) {
+                background = leftBackground;
+            }
+            pendingRemoval(swipedPosition, swipeDir);
+        }
+
+        @Override
+        public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+            View itemView = viewHolder.itemView;
+
+            // not sure why, but this method get's called for viewholder that are already swiped away
+            if (viewHolder.getAdapterPosition() == -1) {
+                // not interested in those
+                return;
             }
 
-            // not important, we don't want drag & drop
-            @Override
-            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-                return false;
+            if (!initiated) {
+                init();
             }
 
-            @Override
-            public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-                int position = viewHolder.getAdapterPosition();
-                if (recyclerView.getAdapter().getItemViewType(position) == TYPE_HEADER) {
-                    return 0;
-                }
-                return super.getSwipeDirs(recyclerView, viewHolder);
-            }
-
-            @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
-                int swipedPosition = viewHolder.getAdapterPosition();
-                pendingRemoval(swipedPosition);
-                headerHeight = 0;
-            }
-
-            @Override
-            public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
-                View itemView = viewHolder.itemView;
-
-                // not sure why, but this method get's called for viewholder that are already swiped away
-                if (viewHolder.getAdapterPosition() == -1) {
-                    // not interested in those
-                    return;
-                }
-
-                if (!initiated) {
-                    init();
-                }
-
-                // draw red background
-                background.setBounds(itemView.getRight() + (int) dX, itemView.getTop(), itemView.getRight(), itemView.getBottom());
-                background.draw(c);
+            if (dX < 0) {
+                // draw background
+                rightBackground.setBounds(itemView.getRight() + (int) dX, itemView.getTop(), itemView.getRight(), itemView.getBottom());
+                rightBackground.draw(c);
 
                 // draw x mark
                 int itemHeight = itemView.getBottom() - itemView.getTop();
-                int intrinsicWidth = xMark.getIntrinsicWidth();
-                int intrinsicHeight = xMark.getIntrinsicWidth();
+                int intrinsicWidth = rightMark.getIntrinsicWidth();
+                int intrinsicHeight = rightMark.getIntrinsicHeight();
 
                 int xMarkLeft = itemView.getRight() - xMarkMargin - intrinsicWidth;
                 int xMarkRight = itemView.getRight() - xMarkMargin;
                 int xMarkTop = itemView.getTop() + (itemHeight - intrinsicHeight)/2;
                 int xMarkBottom = xMarkTop + intrinsicHeight;
-                xMark.setBounds(xMarkLeft, xMarkTop, xMarkRight, xMarkBottom);
+                rightMark.setBounds(xMarkLeft, xMarkTop, xMarkRight, xMarkBottom);
 
-                xMark.draw(c);
+                rightMark.draw(c);
+            }
+            else if (dX > 0){
+                // draw background
+                leftBackground.setBounds(itemView.getLeft(), itemView.getTop(), itemView.getLeft() + (int) dX, itemView.getBottom());
+                leftBackground.draw(c);
 
-                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+                // draw x mark
+                int itemHeight = itemView.getBottom() - itemView.getTop();
+                int intrinsicWidth = leftMark.getIntrinsicWidth();
+                int intrinsicHeight = leftMark.getIntrinsicHeight();
+
+                int xMarkLeft = itemView.getLeft() + xMarkMargin;
+                int xMarkRight = itemView.getLeft() + xMarkMargin + intrinsicWidth;
+                int xMarkTop = itemView.getTop() + (itemHeight - intrinsicHeight)/2;
+                int xMarkBottom = xMarkTop + intrinsicHeight;
+                leftMark.setBounds(xMarkLeft, xMarkTop, xMarkRight, xMarkBottom);
+
+                leftMark.draw(c);
             }
 
-        };
-        ItemTouchHelper mItemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
-        mItemTouchHelper.attachToRecyclerView(recycler);
-    }
+            super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+        }
+
+    };
 
     /**
-     * Set up ItemDecorator that draws red background while the items are animating to their new place
+     * Set up ItemDecorator that draws background while the items are animating to their new place
      * after an item is removed.
      */
     private void setUpAnimationDecoratorHelper(RecyclerView recycler) {
         recycler.addItemDecoration(new RecyclerView.ItemDecoration() {
 
-            // we want to cache this and not allocate anything repeatedly in the onDraw method
-            Drawable background;
-            boolean initiated;
-
-            private void init() {
-                background = new ColorDrawable(Color.RED);
-                initiated = true;
-            }
-
             @Override
             public void onDraw(Canvas c, RecyclerView parent, RecyclerView.State state) {
-
-                if (!initiated) {
-                    init();
-                }
 
                 // only if animation is in progress
                 if (parent.getItemAnimator().isRunning() && !lastWasUndo) {
@@ -519,8 +591,7 @@ public abstract class UndoAdapter<VH extends ViewHolder> extends Adapter<VH> {
     private int convertDpToPixel(int dp){
         Resources resources = context.getResources();
         DisplayMetrics metrics = resources.getDisplayMetrics();
-        int px = (int) (dp * (metrics.densityDpi / 160f));
-        return px;
+        return (int) (dp * (metrics.densityDpi / 160f));
     }
 
 }

@@ -241,7 +241,7 @@ public abstract class UndoAdapter<VH extends ViewHolder> extends Adapter<VH> {
         pendingRemovalItem = list.get(position);
         pendingRemovalPosition = position;
 
-        if (getItemViewType(position - 1) == TYPE_HEADER &&
+        if (position != 0 && getItemViewType(position - 1) == TYPE_HEADER &&
                 (position == list.size() - 1 || getItemViewType(position + 1) == TYPE_HEADER)) {
             pendingRemovalHeader = list.get(position - 1);
             list.remove(position);

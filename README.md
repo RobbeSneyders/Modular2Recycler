@@ -97,7 +97,7 @@ public class MyAdapter extends UndoAdapter<MyViewHolder> {
 
 ```
 private void fillList() {
-        recycler.setHasFixedSize(false);
+        recyclerView.setHasFixedSize(false);
 
         // The objects used in your database (MyObject in this example), should be wrapped in UndoItem before giving the list of 
         // objects to the adapter.
@@ -116,10 +116,10 @@ private void fillList() {
             list.add(i, undoItem);
         }
 
-        shortcutsRecycler.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        final MyAdapter adapter = new MyAdapter(this, list , rootView, recycler, "Item", true);
-        shortcutsRecycler.setAdapter(adapter);
+        final MyAdapter adapter = new MyAdapter(this, list , rootView, recyclerView, "Item", true);
+        recyclerView.setAdapter(adapter);
     } 
 ```
 

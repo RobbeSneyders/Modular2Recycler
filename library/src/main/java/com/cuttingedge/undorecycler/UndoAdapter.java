@@ -38,48 +38,19 @@ public abstract class UndoAdapter<VH extends ViewHolder> extends Adapter<VH> {
     private int pendingRemovalPosition;
 
     private View rootView;
+    private RecyclerView recycler;
 
     private Context context;
 
     //Used for animating header without red background when last shortcut of type gets deleted
     private int headerHeight;
+    private int itemHeight;
 
     //Red animation behind item should only run on delete, not on undo.
     private boolean lastWasUndo;
 
     /**
-     * Adapter with full functionality.
-     *
-     * @param list List of UndoItems. This list should be sorted alphabetically.
-     * @param rootView Root view used for the creation of a snackbar.
-     * @param recycler Recycler for which this adapter is used
-     * @param itemName Text used in snackbar: "'itemName' removed".
-     * @param withHeaders Use headers if true
-     */
-    /**
-     * Adapter with full functionality.
-     *
-     * @param list List of UndoItems. This list should be sorted alphabetically.
-     * @param rootView Root view used for the creation of a snackbar.
-     * @param recycler Recycler for which this adapter is used
-     * @param withHeaders Use headers if true
-     */
-    public UndoAdapter(Context context, List<UndoItem> list, View rootView, RecyclerView recycler, boolean withHeaders) {
-        this.context = context;
-        this.list = list;
-        this.rootView = rootView;
-
-        if (withHeaders)
-            insertHeaders();
-
-        setUpItemTouchHelper(recycler);
-        setUpAnimationDecoratorHelper(recycler);
-        ItemClickSupport.addTo(recycler).setOnItemClickListener(clickListener);
-        ItemClickSupport.addTo(recycler).setOnItemLongClickListener(longClickListener);
-    }
-
-    /**
-     * Adapter without swipe to dismiss & undo.
+     * Constructor
      *
      * @param list List of UndoItems. This list should be sorted alphabetically.
      * @param recycler Recycler for which this adapter is used
@@ -88,6 +59,7 @@ public abstract class UndoAdapter<VH extends ViewHolder> extends Adapter<VH> {
     public UndoAdapter(Context context, List<UndoItem> list, RecyclerView recycler, boolean withHeaders) {
         this.context = context;
         this.list = list;
+        this.recycler = recycler;
 
         if (withHeaders)
             insertHeaders();
@@ -122,7 +94,8 @@ public abstract class UndoAdapter<VH extends ViewHolder> extends Adapter<VH> {
     public VH onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == TYPE_ITEM) {
             return onCreateItemViewHolder(parent);
-        } else if (viewType == TYPE_HEADER) {
+        }
+        else if (viewType == TYPE_HEADER) {
             return onCreateHeaderViewHolder(parent);
         }
         throw new RuntimeException("there is no type that matches the type " + viewType);
@@ -247,8 +220,7 @@ public abstract class UndoAdapter<VH extends ViewHolder> extends Adapter<VH> {
             list.remove(position);
             list.remove(position - 1);
             notifyItemRangeRemoved(position -1, 2);
-        }
-        else {
+        } else {
             pendingRemovalHeader = null;
             list.remove(position);
             notifyItemRemoved(position);
@@ -327,9 +299,10 @@ public abstract class UndoAdapter<VH extends ViewHolder> extends Adapter<VH> {
     /**
      * Sets up the ItemTouchHelper and attaches it to the RecyclerView.
      */
-    private void setUpItemTouchHelper(RecyclerView recycler) {
+    private void setUpItemTouchHelper() {
         ItemTouchHelper mItemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
         mItemTouchHelper.attachToRecyclerView(recycler);
+        setUpAnimationDecoratorHelper(recycler);
     }
 
     private Drawable leftBackground;
@@ -339,24 +312,31 @@ public abstract class UndoAdapter<VH extends ViewHolder> extends Adapter<VH> {
     private Drawable rightMark;
     private String leftMessage;
     private String rightMessage;
+    private boolean initialized;
 
     /**
      * Make items swipeable to the left.
      *
      * @param color Color used for background behind swiped item.
      * @param icon Icon shown behind swiped item.
+     * @param rootView Root view used for the creation of a snackbar.
      * @param message Message shown in snackbar when item gets swiped.
      */
-    protected void setSwipeLeft(int color, Drawable icon, String message) {
+    protected void setSwipeLeft(int color, Drawable icon, View rootView, String message) {
+        if (!initialized)
+            setUpItemTouchHelper();
+        initialized = true;
+
         if (leftBackground != null) {
             simpleItemTouchCallback.setDefaultSwipeDirs(ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
-        }
-        else {
+        } else {
             simpleItemTouchCallback.setDefaultSwipeDirs(ItemTouchHelper.LEFT);
         }
+
         rightBackground = new ColorDrawable(color);
         rightMark = icon;
         leftMessage = message;
+        this.rootView = rootView;
     }
 
     /**
@@ -364,18 +344,24 @@ public abstract class UndoAdapter<VH extends ViewHolder> extends Adapter<VH> {
      *
      * @param color Color used for background behind swiped item.
      * @param icon Icon shown behind swiped item.
+     * @param rootView Root view used for the creation of a snackbar.
      * @param message Message shown in snackbar when item gets swiped.
      */
-    protected void setSwipeRight(int color, Drawable icon, String message) {
-        if (leftBackground != null) {
+    public void setSwipeRight(int color, Drawable icon, View rootView, String message) {
+        if (!initialized)
+            setUpItemTouchHelper();
+        initialized = true;
+
+        if (rightBackground != null) {
             simpleItemTouchCallback.setDefaultSwipeDirs(ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
-        }
-        else {
+        } else {
             simpleItemTouchCallback.setDefaultSwipeDirs(ItemTouchHelper.RIGHT);
         }
+
         leftBackground = new ColorDrawable(color);
         leftMark = icon;
         rightMessage = message;
+        this.rootView = rootView;
     }
 
     /**
@@ -398,43 +384,43 @@ public abstract class UndoAdapter<VH extends ViewHolder> extends Adapter<VH> {
             return false;
         }
 
+
         @Override
         public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-            int position = viewHolder.getAdapterPosition();
-            if (recyclerView.getAdapter().getItemViewType(position) == TYPE_HEADER)
+            if (recyclerView.getAdapter().getItemViewType(viewHolder.getAdapterPosition()) == TYPE_HEADER)
                 return 0;
 
             return super.getSwipeDirs(recyclerView, viewHolder);
         }
 
+
         @Override
         public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
-            int swipedPosition = viewHolder.getAdapterPosition();
             headerHeight = 0;
+            itemHeight = viewHolder.itemView.getHeight();
+
             if (swipeDir == ItemTouchHelper.LEFT) {
                 background = rightBackground;
-            }
-            else if (swipeDir == ItemTouchHelper.RIGHT) {
+            } else if (swipeDir == ItemTouchHelper.RIGHT) {
                 background = leftBackground;
             }
-            pendingRemoval(swipedPosition, swipeDir);
+            pendingRemoval(viewHolder.getAdapterPosition(), swipeDir);
         }
+
 
         @Override
         public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+
             View itemView = viewHolder.itemView;
 
             // not sure why, but this method get's called for viewholder that are already swiped away
-            if (viewHolder.getAdapterPosition() == -1) {
-                // not interested in those
+            if (viewHolder.getAdapterPosition() == -1)
                 return;
-            }
 
-            if (!initiated) {
+            if (!initiated)
                 init();
-            }
 
-            if (dX < 0) {
+            if (dX < 0) { // Swiped left
                 // draw background
                 rightBackground.setBounds(itemView.getRight() + (int) dX, itemView.getTop(), itemView.getRight(), itemView.getBottom());
                 rightBackground.draw(c);
@@ -448,11 +434,11 @@ public abstract class UndoAdapter<VH extends ViewHolder> extends Adapter<VH> {
                 int xMarkRight = itemView.getRight() - xMarkMargin;
                 int xMarkTop = itemView.getTop() + (itemHeight - intrinsicHeight)/2;
                 int xMarkBottom = xMarkTop + intrinsicHeight;
-                rightMark.setBounds(xMarkLeft, xMarkTop, xMarkRight, xMarkBottom);
 
+                rightMark.setBounds(xMarkLeft, xMarkTop, xMarkRight, xMarkBottom);
                 rightMark.draw(c);
             }
-            else if (dX > 0){
+            else if (dX > 0){ // Swiped right
                 // draw background
                 leftBackground.setBounds(itemView.getLeft(), itemView.getTop(), itemView.getLeft() + (int) dX, itemView.getBottom());
                 leftBackground.draw(c);
@@ -466,14 +452,12 @@ public abstract class UndoAdapter<VH extends ViewHolder> extends Adapter<VH> {
                 int xMarkRight = itemView.getLeft() + xMarkMargin + intrinsicWidth;
                 int xMarkTop = itemView.getTop() + (itemHeight - intrinsicHeight)/2;
                 int xMarkBottom = xMarkTop + intrinsicHeight;
-                leftMark.setBounds(xMarkLeft, xMarkTop, xMarkRight, xMarkBottom);
 
+                leftMark.setBounds(xMarkLeft, xMarkTop, xMarkRight, xMarkBottom);
                 leftMark.draw(c);
             }
-
             super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
         }
-
     };
 
     /**
@@ -538,18 +522,19 @@ public abstract class UndoAdapter<VH extends ViewHolder> extends Adapter<VH> {
                     }
 
                     if (headerHeight == 0)
-                        headerHeight = bottom - top - convertDpToPixel(56);
+                        headerHeight = bottom - top - itemHeight;
 
                     background.setBounds(left, top + headerHeight, right, bottom);
                     background.draw(c);
-
                 }
                 super.onDraw(c, parent, state);
             }
-
         });
     }
 
+    /**
+     * OnItemClickListener defined in ItemClickSupport
+     */
     ItemClickSupport.OnItemClickListener clickListener = new ItemClickSupport.OnItemClickListener() {
         @Override
         public void onItemClicked(RecyclerView recyclerView, int position, View v) {
@@ -558,6 +543,9 @@ public abstract class UndoAdapter<VH extends ViewHolder> extends Adapter<VH> {
         }
     };
 
+    /**
+     * OnItemLongClickListener defined in ItemClickSupport
+     */
     ItemClickSupport.OnItemLongClickListener longClickListener = new ItemClickSupport.OnItemLongClickListener() {
         @Override
         public boolean onItemLongClicked(RecyclerView recyclerView, int position, View v) {
@@ -582,16 +570,4 @@ public abstract class UndoAdapter<VH extends ViewHolder> extends Adapter<VH> {
      * @param v long clicked View.
      */
     protected abstract boolean itemLongClicked(RecyclerView recyclerView, int position, View v);
-
-    /**
-     * Converts dp to pixel (device specific)
-     * @param dp value in dp
-     * @return value in pixels
-     */
-    private int convertDpToPixel(int dp){
-        Resources resources = context.getResources();
-        DisplayMetrics metrics = resources.getDisplayMetrics();
-        return (int) (dp * (metrics.densityDpi / 160f));
-    }
-
 }

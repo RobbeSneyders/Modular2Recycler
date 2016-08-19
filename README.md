@@ -52,7 +52,7 @@ public class MyAdapter extends UndoAdapter<MyViewHolder> {
     @Override
     protected void onBindHeaderViewHolder(MyViewHolder holder, int position) {
         // Set up header data in header view
-        holder.vText.setText(list.get(position).index);
+        holder.vText.setText(list.get(position).header);
     }
 
     @Override
@@ -84,8 +84,8 @@ public class MyAdapter extends UndoAdapter<MyViewHolder> {
 
     // Extend RecyclerView.Viewholder like you would in a normal adapter.
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        protected ImageView vIcon;
-        protected TextView vText;
+        public ImageView vIcon;
+        public TextView vText;
 
         public MyViewHolder(View view, int type) {
             super(view);

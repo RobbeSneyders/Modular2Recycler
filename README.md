@@ -21,10 +21,10 @@ Create a new **Adapter that extends UndoAdapter**:
 public class MyAdapter extends UndoAdapter<MyViewHolder> {
 
     public MyAdapter(Context context, List<UndoItem> list, View rootView, RecyclerView recycler, boolean withHeader) {
-        super(context, list, rootView, recycler, itemName, withHeader);
+        super(context, list, recycler, itemName, withHeader);
         // Set your swipe directions. You can set left, right or both.
-        setSwipeLeft(Color.RED, context.getDrawable(R.drawable.ic_delete), "Item removed");
-        setSwipeRight(Color.GREEN, context.getDrawable(R.drawable.ic_archive), "Item archived");
+        setSwipeLeft(Color.RED, context.getDrawable(R.drawable.ic_delete), rootView, "Item removed");
+        setSwipeRight(Color.GREEN, context.getDrawable(R.drawable.ic_archive), rootView, "Item archived");
     }
 
     @Override
@@ -52,7 +52,7 @@ public class MyAdapter extends UndoAdapter<MyViewHolder> {
     @Override
     protected void onBindHeaderViewHolder(MyViewHolder holder, int position) {
         // Set up header data in header view
-        holder.vText.setText(list.get(position).index);
+        holder.vText.setText(list.get(position).header);
     }
 
     @Override
@@ -84,8 +84,8 @@ public class MyAdapter extends UndoAdapter<MyViewHolder> {
 
     // Extend RecyclerView.Viewholder like you would in a normal adapter.
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        protected ImageView vIcon;
-        protected TextView vText;
+        public ImageView vIcon;
+        public TextView vText;
 
         public MyViewHolder(View view, int type) {
             super(view);
@@ -126,14 +126,14 @@ private void fillList() {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        final MyAdapter adapter = new MyAdapter(this, list , rootView, recyclerView, "Item", true);
+        final MyAdapter adapter = new MyAdapter(this, list , rootView, recyclerView, true);
         recyclerView.setAdapter(adapter);
     } 
 ```
 
-###Disable functions of adapter:
+###Enable/Disable functions of adapter:
 
-- **Swipe to remove** and **undo** can be disabled by **using other constructor**.
+- **Swipe to remove** and **undo** can be enabled by calling setSwipeLeft(...) or/and setSwipeRight(...)
 - **Headers** can be disabled by **boolean in constructor**.
 - **Click and long click** can be disabled by **not implementing itemClicked and itemLongClicked** method.
 

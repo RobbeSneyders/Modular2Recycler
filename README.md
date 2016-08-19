@@ -1,43 +1,50 @@
 # UndoRecycler
 Adapter with integrated 
-- Swipe to remove
+- Swipe to remove/archive/any action
 - Undo
 - Headers
 - Onclicklistener
 - Onlongclicklistener.
 
 
-[![UndoRecycler](http://i.imgur.com/R0zn49u.gif)](http://imgur.com/R0zn49u) [![UndoRecyclerAlphabetic](http://i.imgur.com/0hifpra.gif)](http://imgur.com/0hifpra)
-
-**Find an example of UndoAdapter in the app Swipe Shortcuts Widget:**
-
-<a href="https://play.google.com/store/apps/details?id=com.cuttingedge.swipeshortcuts"><img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/images/apps/en-play-badge-border.png" width="300" /></a>
+[![UndoRecycler](http://i.imgur.com/jFQTroq.gif)](http://imgur.com/jFQTroq) [![UndoRecyclerAlphabetic](http://i.imgur.com/5bgXPR2.gif)](http://imgur.com/5bgXPR2)
 
 ##How to use
 
 Create a new **Adapter that extends UndoAdapter**:
 
-```
-public class MyAdapter extends UndoAdapter<MyViewHolder> {
+This is an example with pseudocode.
+For a working example, check the app module of the repository.
 
-    public MyAdapter(Context context, List<UndoItem> list, View rootView, RecyclerView recycler, boolean withHeader) {
-        super(context, list, recycler, itemName, withHeader);
-        // Set your swipe directions. You can set left, right or both.
-        setSwipeLeft(Color.RED, context.getDrawable(R.drawable.ic_delete), rootView, "Item removed");
-        setSwipeRight(Color.GREEN, context.getDrawable(R.drawable.ic_archive), rootView, "Item archived");
+```
+public class MyAdapter extends MyAdapter<MyAdapter.MyViewHolder> {
+
+    /**
+     * @param context     Context
+     * @param list        List of UndoItems. This list should be sorted alphabetically.
+     * @param recycler    Recycler for which this adapter is used
+     * @param rootView    Rootview to attach snackbar to
+     * @param withHeaders Use headers if true
+     */
+    public MyAdapter(Context context, List<UndoItem> list, RecyclerView recycler, View rootView, boolean withHeaders) {
+        super(context, list, recycler, withHeaders);
+        // Set swipe left to delete
+        setSwipeLeft(Color.RED, context.getResources().getDrawable(R.drawable.ic_delete_white_24dp), rootView);
+        // set swipe left to archive
+        setSwipeRight(context.getResources().getColor(R.color.green), context.getResources().getDrawable(R.drawable.ic_archive), rootView);
     }
 
     @Override
     protected MyViewHolder onCreateItemViewHolder(ViewGroup parent) {
         // Inflate view used for items and return ViewHolder with this view.
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_layout, parent, false);
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_row, parent, false);
         return new MyViewHolder(itemView, TYPE_ITEM);
     }
 
     @Override
     protected MyViewHolder onCreateHeaderViewHolder(ViewGroup parent) {
         // Inflate view used for headers and return ViewHolder with this view.
-        View headerView = LayoutInflater.from(parent.getContext()).inflate(R.layout.header_layout, parent, false);
+        View headerView = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_header, parent, false);
         return new MyViewHolder(headerView, TYPE_HEADER);
     }
 
@@ -45,7 +52,7 @@ public class MyAdapter extends UndoAdapter<MyViewHolder> {
     protected void onBindItemViewHolder(MyViewHolder holder, int position) {
         // Set up item data in item view
         MyObject myObject = (MyObject) list.get(position).object;
-        holder.vText.setText(myObject.text);
+        holder.vText.setText(myObject.name);
         holder.vIcon.setImageDrawable(myObject.icon);
     }
 
@@ -56,33 +63,47 @@ public class MyAdapter extends UndoAdapter<MyViewHolder> {
     }
 
     @Override
-    protected void swipedLeft(Object swipedItem) {
-        // Handle left swipe. Do not worry about undo. A reference to swipedItem is kept by super and will be provided on undo.
-    }
-    
-    @Override
-    protected void swipedRight(Object swipedItem) {
-        // Handle right swipe. Do not worry about undo. A reference to swipedItem is kept by super and will be provided on undo.
+    protected String swipedLeft(Object swipedItem) {
+        // swipe left is delete -> remove from database
+        // undo reference to swipedItem is kept by super class
+        Database.remove((MyObject) swipedItem);
+        // Return the message to be displayed in the toast
+        return ((MyObject) swipedItem).name + " was deleted";
     }
 
     @Override
-    protected void readd(Object readdItem) {
-        // Add readdItem to database.
+    protected String swipedRight(Object swipedItem) {
+        // swipe left is archive -> move myObject to archive
+        // undo reference to swipedItem is kept by super class
+        Database.archive((MyObject) swipedItem);
+        // Return the message to be displayed in the toast
+        return ((MyObject) swipedItem).name + " was archived";
+    }
+
+    @Override
+    protected void undoLeft(Object restoreItem) {
+        // Undo delete -> add restoreItem back to database
+        Database.add((MyObject) restoreItem);
+    }
+
+    @Override
+    protected void undoRight(Object restoreItem) {
+        // Undo archive -> move restore item back from archive.
+        Database.getFromArchive((MyObject) restoreItem);
     }
 
     @Override
     protected void itemClicked(RecyclerView recyclerView, int position, View v) {
-        // Handle click
+        // Handle item click
     }
 
     @Override
     protected boolean itemLongClicked(RecyclerView recyclerView, int position, View v) {
-        // Handle longclick and return true
-        // Do nothing and return false
-        return false;
+        // Handle item long click
+        // return true if click is consumed, otherwise false
+        return true;
     }
 
-    // Extend RecyclerView.Viewholder like you would in a normal adapter.
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public ImageView vIcon;
         public TextView vText;
@@ -90,12 +111,9 @@ public class MyAdapter extends UndoAdapter<MyViewHolder> {
         public MyViewHolder(View view, int type) {
             super(view);
             if (type == TYPE_ITEM) {
-                vIcon = (ImageView) view.findViewById(R.id.iconImageView);
-                vText = (TextView) view.findViewById(R.id.appNameTextView);
+                vIcon = (ImageView) view.findViewById(R.id.imageView);
             }
-            else if (type == TYPE_HEADER) {
-                vText = (TextView) view.findViewById(R.id.separator);
-            }
+            vText = (TextView) view.findViewById(R.id.textView);
         }
     }
 }
@@ -105,7 +123,6 @@ public class MyAdapter extends UndoAdapter<MyViewHolder> {
 
 ```
 private void fillList() {
-        recyclerView.setHasFixedSize(false);
 
         // The objects used in your database (MyObject in this example), should be wrapped in UndoItem before giving the list of 
         // objects to the adapter.
@@ -120,6 +137,7 @@ private void fillList() {
             
             // If you want the alphabet as headers (see 2nd gif), use:
             // UndoItem undoItem = new UndoItem(myObjectList.get(i).name.substring(0,1), myObjectList.get(i));
+            // This sets the first character of the myObject's name as header
             
             list.add(i, undoItem);
         }
@@ -137,3 +155,10 @@ private void fillList() {
 - **Headers** can be disabled by **boolean in constructor**.
 - **Click and long click** can be disabled by **not implementing itemClicked and itemLongClicked** method.
 
+
+
+**Find another example of UndoAdapter in the app Swipe Shortcuts Widget:**
+
+<a href="https://play.google.com/store/apps/details?id=com.cuttingedge.swipeshortcuts"><img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/images/apps/en-play-badge-border.png" width="300" /></a>
+
+[![UndoRecycler](http://i.imgur.com/R0zn49u.gif)](http://imgur.com/R0zn49u) [![UndoRecyclerAlphabetic](http://i.imgur.com/0hifpra.gif)](http://imgur.com/0hifpra)

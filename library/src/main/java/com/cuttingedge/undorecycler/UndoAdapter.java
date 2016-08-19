@@ -557,7 +557,10 @@ public abstract class UndoAdapter<VH extends ViewHolder> extends Adapter<VH> {
     ItemClickSupport.OnItemLongClickListener longClickListener = new ItemClickSupport.OnItemLongClickListener() {
         @Override
         public boolean onItemLongClicked(RecyclerView recyclerView, int position, View v) {
-            return itemLongClicked(recyclerView, position, v);
+            if (getItemViewType(position) == TYPE_ITEM)
+                return itemLongClicked(recyclerView, position, v);
+
+            return false;
         }
     };
 

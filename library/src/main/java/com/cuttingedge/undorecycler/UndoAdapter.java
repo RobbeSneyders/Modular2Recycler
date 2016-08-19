@@ -1,7 +1,6 @@
 package com.cuttingedge.undorecycler;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -10,10 +9,10 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.Adapter;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -33,20 +32,22 @@ public abstract class UndoAdapter<VH extends ViewHolder> extends Adapter<VH> {
     // Sub classes should find items by calling list.get(position).
     protected List<UndoItem> list;
 
+    // Last removed item saved so removal can be undone
     private UndoItem pendingRemovalItem;
     private UndoItem pendingRemovalHeader;
     private int pendingRemovalPosition;
+    private int pendingRemovalSwipeDir;
 
     private View rootView;
     private RecyclerView recycler;
 
-    private Context context;
+    protected Context context;
 
-    //Used for animating header without red background when last shortcut of type gets deleted
+    // Used for animating header without red background when last shortcut of type gets deleted
     private int headerHeight;
     private int itemHeight;
 
-    //Red animation behind item should only run on delete, not on undo.
+    // Animation behind item should only run on delete, not on undo.
     private boolean lastWasUndo;
 
     /**
@@ -213,6 +214,7 @@ public abstract class UndoAdapter<VH extends ViewHolder> extends Adapter<VH> {
         lastWasUndo = false;
         pendingRemovalItem = list.get(position);
         pendingRemovalPosition = position;
+        pendingRemovalSwipeDir = swipeDir;
 
         if (position != 0 && getItemViewType(position - 1) == TYPE_HEADER &&
                 (position == list.size() - 1 || getItemViewType(position + 1) == TYPE_HEADER)) {
@@ -227,12 +229,10 @@ public abstract class UndoAdapter<VH extends ViewHolder> extends Adapter<VH> {
         }
 
         if (swipeDir == ItemTouchHelper.LEFT) {
-            swipedLeft(pendingRemovalItem.object);
-            showSnackbar(leftMessage);
+            showSnackbar(swipedLeft(pendingRemovalItem.object));
         }
         else if (swipeDir == ItemTouchHelper.RIGHT){
-            swipedRight(pendingRemovalItem.object);
-            showSnackbar(rightMessage);
+            showSnackbar(swipedRight(pendingRemovalItem.object));
         }
     }
 
@@ -259,7 +259,6 @@ public abstract class UndoAdapter<VH extends ViewHolder> extends Adapter<VH> {
      * Add the item back to the itemList on it's old location and notify for changes.
      */
     private void undo() {
-        readd(pendingRemovalItem.object);
         lastWasUndo = true;
 
         if (pendingRemovalHeader != null) {
@@ -271,30 +270,45 @@ public abstract class UndoAdapter<VH extends ViewHolder> extends Adapter<VH> {
             list.add(pendingRemovalPosition, pendingRemovalItem);
             notifyItemInserted(pendingRemovalPosition);
         }
+
+        if (pendingRemovalSwipeDir == ItemTouchHelper.LEFT) {
+            undoLeft(pendingRemovalItem.object);
+        }
+        else if (pendingRemovalSwipeDir == ItemTouchHelper.RIGHT){
+            undoRight(pendingRemovalItem.object);
+        }
     }
 
     /**
      * Called when an item is swiped left.
      *
      * @param swipedItem Item that was swiped.
+     * @return message to show in toast.
      */
-    protected abstract void swipedLeft(Object swipedItem);
+    protected abstract String swipedLeft(Object swipedItem);
 
 
     /**
      * Called when an item is swiped Right.
      *
      * @param swipedItem Item that was swiped.
+     * @return message to show in toast.
      */
-    protected abstract void swipedRight(Object swipedItem);
-
+    protected abstract String swipedRight(Object swipedItem);
 
     /**
-     * Called after undo, when an item needs to be readded to the database.
+     * Called when swipedLeft is undone.
      *
-     * @param readdItem Item to readd to database.
+     * @param restoreItem Item to restore;
      */
-    protected abstract void readd(Object readdItem);
+    protected abstract void undoLeft(Object restoreItem);
+
+    /**
+     * Called when swipedRight is undone.
+     *
+     * @param restoreItem Item to restore;.
+     */
+    protected abstract void undoRight(Object restoreItem);
 
     /**
      * Sets up the ItemTouchHelper and attaches it to the RecyclerView.
@@ -310,8 +324,6 @@ public abstract class UndoAdapter<VH extends ViewHolder> extends Adapter<VH> {
     private Drawable background;
     private Drawable leftMark;
     private Drawable rightMark;
-    private String leftMessage;
-    private String rightMessage;
     private boolean initialized;
 
     /**
@@ -320,9 +332,8 @@ public abstract class UndoAdapter<VH extends ViewHolder> extends Adapter<VH> {
      * @param color Color used for background behind swiped item.
      * @param icon Icon shown behind swiped item.
      * @param rootView Root view used for the creation of a snackbar.
-     * @param message Message shown in snackbar when item gets swiped.
      */
-    protected void setSwipeLeft(int color, Drawable icon, View rootView, String message) {
+    protected void setSwipeLeft(int color, Drawable icon, View rootView) {
         if (!initialized)
             setUpItemTouchHelper();
         initialized = true;
@@ -335,7 +346,6 @@ public abstract class UndoAdapter<VH extends ViewHolder> extends Adapter<VH> {
 
         rightBackground = new ColorDrawable(color);
         rightMark = icon;
-        leftMessage = message;
         this.rootView = rootView;
     }
 
@@ -345,9 +355,8 @@ public abstract class UndoAdapter<VH extends ViewHolder> extends Adapter<VH> {
      * @param color Color used for background behind swiped item.
      * @param icon Icon shown behind swiped item.
      * @param rootView Root view used for the creation of a snackbar.
-     * @param message Message shown in snackbar when item gets swiped.
      */
-    public void setSwipeRight(int color, Drawable icon, View rootView, String message) {
+    public void setSwipeRight(int color, Drawable icon, View rootView) {
         if (!initialized)
             setUpItemTouchHelper();
         initialized = true;
@@ -360,7 +369,6 @@ public abstract class UndoAdapter<VH extends ViewHolder> extends Adapter<VH> {
 
         leftBackground = new ColorDrawable(color);
         leftMark = icon;
-        rightMessage = message;
         this.rootView = rootView;
     }
 
@@ -570,4 +578,20 @@ public abstract class UndoAdapter<VH extends ViewHolder> extends Adapter<VH> {
      * @param v long clicked View.
      */
     protected abstract boolean itemLongClicked(RecyclerView recyclerView, int position, View v);
+
+    /**
+     * Swap the data in the recycler
+     * @param newList new data
+     */
+    public void swap(List<UndoItem> newList){
+        if (list != null) {
+            list.clear();
+            list.addAll(newList);
+        }
+        else {
+            list = newList;
+        }
+        insertHeaders();
+        notifyDataSetChanged();
+    }
 }

@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">PokéApp</string>
+    <string name="title_activity_main">MainActivity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_reset">Reset</string>
+
+    <string name="undorecycler_example">Example UndoRecycler library</string>
+    <string name="backpack">Backpack</string>
+    <string name="bills_pc">Bill\'s PC</string>
+    <string name="github">Github</string>
+    <string name="share">Share</string>
+    <string name="share_message">UndoRecycler is an Adapter with integrated swipe to remove/archive, undo, headers, OnItemClickListener and OnItemLongClickListener. \n
+        https://github.com/RobbeSneyders/UndoRecycler</string>
+</resources>

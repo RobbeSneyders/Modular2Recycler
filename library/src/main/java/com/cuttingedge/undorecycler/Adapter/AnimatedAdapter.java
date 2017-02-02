@@ -14,10 +14,11 @@ import com.cuttingedge.undorecycler.R;
  *
  * Base adapter class with all code about animation
  */
-public abstract class AnimatedAdapter extends Adapter<ViewHolder> {
+@SuppressWarnings("WeakerAccess")
+abstract class AnimatedAdapter<VH extends ViewHolder> extends Adapter<VH> {
 
-    protected int headerHeight;
-    protected int itemHeight;
+    private int headerHeight;
+    private int itemHeight;
 
     protected Drawable leftBackground;
     protected Drawable rightBackground;
@@ -61,7 +62,7 @@ public abstract class AnimatedAdapter extends Adapter<ViewHolder> {
     /**
      * Callback used in ItemTouchHelper to draw a background behind the swiped item.
      */
-    ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, 0) {
+    private ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, 0) {
 
         // we want to cache these and not allocate anything repeatedly in the onChildDraw method
         int xMarkMargin;

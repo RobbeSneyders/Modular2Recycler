@@ -7,12 +7,12 @@ import com.cuttingedge.undorecycler.ModularItem;
  *
  * Interface to implement in AdapterModule if ItemClicks are wanted
  */
-public interface OnItemClickListenerModule<Item extends ModularItem> {
+public interface OnItemClickListenerModule<I extends ModularItem> {
 
     /**
      * Called when item of corresponding adapterModule was clicked.
      *
      * @param item clicked item
      */
-     void onItemClicked(Item item);
+     void onItemClicked(I item);
 }

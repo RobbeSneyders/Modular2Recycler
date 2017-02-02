@@ -1,7 +1,8 @@
-package com.cuttingedge.undorecycler;
+package com.cuttingedge.undorecycler.Helpers;
 
 import android.support.v7.widget.RecyclerView.ViewHolder;
 
+import com.cuttingedge.undorecycler.ModularItem;
 import com.cuttingedge.undorecycler.Modules.AdapterModule;
 
 import java.util.Map;
@@ -12,13 +13,13 @@ import java.util.TreeMap;
  *
  * Manager for different AdapterModules
  */
-public class AdapterModuleManager<M extends AdapterModule> {
+public class AdapterModuleManager<M extends AdapterModule<VH, I>, VH extends ViewHolder, I extends ModularItem> {
 
 
     /**
      * TreeMap connecting ViewTypes with AdapterModules
      */
-    TreeMap<Integer, M> types = new TreeMap<>();
+    private TreeMap<Integer, M> types = new TreeMap<>();
 
 
     /**
@@ -27,7 +28,7 @@ public class AdapterModuleManager<M extends AdapterModule> {
      * @param module AdapterModule to be added.
      */
     public void addAdapterModule(M module) {
-        if (!types.containsValue(module));
+        if (!types.containsValue(module))
             types.put(getNewType(), module);
     }
 
@@ -37,7 +38,7 @@ public class AdapterModuleManager<M extends AdapterModule> {
      * @param viewType ViewType to be handled.
      * @return Responsible AdapterModule.
      */
-    public AdapterModule getAdapterModule(int viewType) {
+    public M getAdapterModule(int viewType) {
         return types.get(viewType);
     }
 
@@ -45,8 +46,8 @@ public class AdapterModuleManager<M extends AdapterModule> {
     /**
      * Get ViewType corresponding to item.
      */
-    public <VH extends ViewHolder, Item extends ModularItem> int getViewType(ModularItem item) {
-        for (AdapterModule<VH, Item> value : types.values()) {
+    public int getViewType(I item) {
+        for (M value : types.values()) {
             if (value.returnedClass().isInstance(item)) {
                 return getKeyByValue(types, value);
             }
@@ -74,7 +75,7 @@ public class AdapterModuleManager<M extends AdapterModule> {
      * @param value value in question.
      * @return matching key
      */
-    private int getKeyByValue(TreeMap<Integer, M> map, AdapterModule value) {
+    private int getKeyByValue(TreeMap<Integer, M> map, M value) {
         for (Map.Entry<Integer, M> entry : map.entrySet()) {
             if (value == entry.getValue()) {
                 return entry.getKey();

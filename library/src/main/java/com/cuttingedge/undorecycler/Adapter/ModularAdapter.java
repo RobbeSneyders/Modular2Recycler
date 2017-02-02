@@ -7,9 +7,9 @@ import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 
-import com.cuttingedge.undorecycler.Modules.AdapterModule;
-import com.cuttingedge.undorecycler.AdapterModuleManager;
+import com.cuttingedge.undorecycler.Helpers.AdapterModuleManager;
 import com.cuttingedge.undorecycler.ModularItem;
+import com.cuttingedge.undorecycler.Modules.AdapterModule;
 import com.cuttingedge.undorecycler.Modules.OnItemClickListenerModule;
 import com.cuttingedge.undorecycler.Modules.OnItemLongClickListenerModule;
 import com.cuttingedge.undorecycler.Modules.OnSwipeListenerModule;
@@ -21,17 +21,18 @@ import java.util.List;
  *
  * Adapter with all modular logic.
  */
-public class ModularAdapter<VH extends ViewHolder, Item extends ModularItem> extends AnimatedAdapter {
+@SuppressWarnings("unused")
+public class ModularAdapter<VH extends ViewHolder, I extends ModularItem> extends AnimatedAdapter<VH> {
 
-    private List<Item> list;
+    private List<I> list;
 
     // Last removed item saved so removal can be undone
-    private Item pendingRemovalItem;
-    private Item pendingRemovalHeader;
+    private I pendingRemovalItem;
+    private I pendingRemovalHeader;
     private int pendingRemovalPosition;
     private int pendingRemovalSwipeDir;
 
-    private AdapterModuleManager adapterModuleManager;
+    private AdapterModuleManager<AdapterModule<VH , I>, VH, I> adapterModuleManager;
 
 
     /**
@@ -39,7 +40,7 @@ public class ModularAdapter<VH extends ViewHolder, Item extends ModularItem> ext
      *
      * @param builder builder used to construct this adapter.
      */
-    ModularAdapter(ModularAdapterBuilder builder) {
+    ModularAdapter(ModularAdapterBuilder<I> builder) {
         super(builder.recyclerView);
         this.list = builder.list;
 
@@ -48,24 +49,32 @@ public class ModularAdapter<VH extends ViewHolder, Item extends ModularItem> ext
         this.leftBackground = builder.leftBackground;
         this.leftMark = builder.leftMark;
 
-        adapterModuleManager = new AdapterModuleManager();
+        adapterModuleManager = new AdapterModuleManager<>();
 
         recyclerView.setAdapter(this);
     }
 
 
     /**
+     * Get list in current state
+     */
+    public List<I> getList() {
+        return list;
+    }
+
+
+    /**
      * Methods for adding and removing single items
      */
-    public void addItem(Item item) {
+    public void addItem(I item) {
         list.add(item);
     }
 
-    public void addItem(int index, Item item) {
+    public void addItem(int index, I item) {
         list.add(index, item);
     }
 
-    public void removeItem(Item item) {
+    public void removeItem(I item) {
         list.remove(item);
     }
 
@@ -75,10 +84,26 @@ public class ModularAdapter<VH extends ViewHolder, Item extends ModularItem> ext
 
 
     /**
+     * Methods for adding and removing multiple items
+     */
+    public void addItems(List<I> items) {
+        list.addAll(items);
+    }
+
+    public void addItems(int index, List<I> items) {
+        list.addAll(index, items);
+    }
+
+    public void removeItems(List<I> items) {
+        list.removeAll(items);
+    }
+
+
+    /**
      * Swap whole list at once
      * @param newList new list
      */
-    public void swap(List<Item> newList){
+    public void swap(List<I> newList){
         if (list != null) {
             list.clear();
             list.addAll(newList);
@@ -95,7 +120,7 @@ public class ModularAdapter<VH extends ViewHolder, Item extends ModularItem> ext
      *
      * @param module AdapterModule to be added.
      */
-    public void addAdapterModule(AdapterModule module) {
+    public <M extends AdapterModule<VH, I>> void addAdapterModule(M module) {
         adapterModuleManager.addAdapterModule(module);
     }
 
@@ -104,7 +129,7 @@ public class ModularAdapter<VH extends ViewHolder, Item extends ModularItem> ext
      * Forward onCreateViewHolder to the appropriate AdapterModule.
      */
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public VH onCreateViewHolder(ViewGroup parent, int viewType) {
         return adapterModuleManager.getAdapterModule(viewType).onCreateViewHolder(parent);
     }
 
@@ -113,7 +138,7 @@ public class ModularAdapter<VH extends ViewHolder, Item extends ModularItem> ext
      * Forward onBindViewHolder to the appropriate AdapterModule.
      */
     @Override
-    public void onBindViewHolder(ViewHolder viewHolder, int position) {
+    public void onBindViewHolder(VH viewHolder, int position) {
         adapterModuleManager.getAdapterModule(viewHolder.getItemViewType()).onBindViewHolder(viewHolder, list.get(position));
     }
 
@@ -123,7 +148,7 @@ public class ModularAdapter<VH extends ViewHolder, Item extends ModularItem> ext
      * Forward onViewAttachedToWindow to the appropriate AdapterModule.
      */
     @Override
-    public void onViewAttachedToWindow(ViewHolder viewHolder) {
+    public void onViewAttachedToWindow(VH viewHolder) {
         viewHolder.itemView.setOnClickListener(onClickListener);
         viewHolder.itemView.setOnLongClickListener(onLongClickListener);
         adapterModuleManager.getAdapterModule(viewHolder.getItemViewType()).onViewAttachedToWindow(viewHolder);
@@ -135,7 +160,7 @@ public class ModularAdapter<VH extends ViewHolder, Item extends ModularItem> ext
      * Forward onViewDetachedFromWindow to the appropriate AdapterModule
      */
     @Override
-    public void onViewDetachedFromWindow(ViewHolder viewHolder) {
+    public void onViewDetachedFromWindow(VH viewHolder) {
         viewHolder.itemView.setOnClickListener(null);
         viewHolder.itemView.setOnLongClickListener(null);
         adapterModuleManager.getAdapterModule(viewHolder.getItemViewType()).onViewDetachedFromWindow(viewHolder);
@@ -146,7 +171,7 @@ public class ModularAdapter<VH extends ViewHolder, Item extends ModularItem> ext
      * Forward onViewRecycled to the appropriate AdapterModule
      */
     @Override
-    public void onViewRecycled(ViewHolder viewHolder) {
+    public void onViewRecycled(VH viewHolder) {
         adapterModuleManager.getAdapterModule(viewHolder.getItemViewType()).onViewRecycled(viewHolder);
     }
 
@@ -195,9 +220,10 @@ public class ModularAdapter<VH extends ViewHolder, Item extends ModularItem> ext
      *
      * @param position Position of item to be removed.
      */
+    @SuppressWarnings("unchecked")
     @Override
     protected void pendingRemoval(int position, int swipeDir) {
-        AdapterModule delegate = adapterModuleManager.getAdapterModule(getItemViewType(position));
+        AdapterModule<VH, I> delegate = adapterModuleManager.getAdapterModule(getItemViewType(position));
 
         lastWasUndo = false;
         pendingRemovalItem = list.get(position);
@@ -216,7 +242,7 @@ public class ModularAdapter<VH extends ViewHolder, Item extends ModularItem> ext
             notifyItemRemoved(position);
         }
 
-        OnSwipeListenerModule swipeListener = (OnSwipeListenerModule) delegate;
+        OnSwipeListenerModule<I> swipeListener = (OnSwipeListenerModule<I>) delegate;
         boolean undoEnabled = (swipeListener.getUndoDirs() & swipeDir) == swipeDir;
         showSnackbar(swipeListener.onSwiped(pendingRemovalItem, swipeDir), undoEnabled);
     }
@@ -226,6 +252,7 @@ public class ModularAdapter<VH extends ViewHolder, Item extends ModularItem> ext
      * Called when user presses undo.
      * Add the item back to the itemList on it's old location and notify for changes.
      */
+    @SuppressWarnings("unchecked")
     private void undo() {
         lastWasUndo = true;
 
@@ -239,8 +266,8 @@ public class ModularAdapter<VH extends ViewHolder, Item extends ModularItem> ext
             notifyItemInserted(pendingRemovalPosition);
         }
 
-        AdapterModule delegate = adapterModuleManager.getAdapterModule(adapterModuleManager.getViewType(pendingRemovalItem));
-        OnSwipeListenerModule swipeListener = (OnSwipeListenerModule) delegate;
+        AdapterModule<VH, I> delegate = adapterModuleManager.getAdapterModule(adapterModuleManager.getViewType(pendingRemovalItem));
+        OnSwipeListenerModule<I> swipeListener = (OnSwipeListenerModule<I>) delegate;
 
         swipeListener.onUndo(pendingRemovalItem, pendingRemovalSwipeDir);
     }
@@ -269,13 +296,14 @@ public class ModularAdapter<VH extends ViewHolder, Item extends ModularItem> ext
     /**
      * OnClickListener to forward clicks to OnItemClickListenerModule
      */
-    OnClickListener onClickListener = new OnClickListener() {
+    @SuppressWarnings("unchecked")
+    private OnClickListener onClickListener = new OnClickListener() {
         @Override
         public void onClick(View v) {
             ViewHolder viewHolder = recyclerView.getChildViewHolder(v);
-            AdapterModule delegate = adapterModuleManager.getAdapterModule(viewHolder.getItemViewType());
+            AdapterModule<VH, I> delegate = adapterModuleManager.getAdapterModule(viewHolder.getItemViewType());
             if (delegate instanceof OnItemClickListenerModule)
-                ((OnItemClickListenerModule) delegate).onItemClicked(list.get(viewHolder.getAdapterPosition()));
+                ((OnItemClickListenerModule<I>) delegate).onItemClicked(list.get(viewHolder.getAdapterPosition()));
         }
     };
 
@@ -283,14 +311,14 @@ public class ModularAdapter<VH extends ViewHolder, Item extends ModularItem> ext
     /**
      * OnLongClickListener to forward clicks to OnItemLongClickListenerModule
      */
-    OnLongClickListener onLongClickListener = new OnLongClickListener() {
+    @SuppressWarnings("unchecked")
+    private OnLongClickListener onLongClickListener = new OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
             ViewHolder viewHolder = recyclerView.getChildViewHolder(v);
             AdapterModule delegate = adapterModuleManager.getAdapterModule(viewHolder.getItemViewType());
-            if (delegate instanceof OnItemClickListenerModule)
-                return ((OnItemLongClickListenerModule) delegate).onItemLongClicked(list.get(viewHolder.getAdapterPosition()));
-            return false;
+            return delegate instanceof OnItemClickListenerModule &&
+                    ((OnItemLongClickListenerModule<I>) delegate).onItemLongClicked(list.get(viewHolder.getAdapterPosition()));
         }
     };
 }

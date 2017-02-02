@@ -13,7 +13,8 @@ import java.lang.reflect.ParameterizedType;
  *
  * This module should be extended for every different item to be shown in the recyclerview
  */
-public abstract class AdapterModule<VH extends ViewHolder, Item extends ModularItem> {
+@SuppressWarnings("unused")
+public abstract class AdapterModule<VH extends ViewHolder, I extends ModularItem> {
 
 
     /**
@@ -46,7 +47,7 @@ public abstract class AdapterModule<VH extends ViewHolder, Item extends ModularI
      * @param viewHolder The ViewHolder which should be updated to represent the contents of the item.
      * @param item item to get contents from.
      */
-    public abstract void onBindViewHolder(VH viewHolder, Item item);
+    public abstract void onBindViewHolder(VH viewHolder, I item);
 
 
     /**

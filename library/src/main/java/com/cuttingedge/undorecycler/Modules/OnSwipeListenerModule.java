@@ -7,7 +7,7 @@ import com.cuttingedge.undorecycler.ModularItem;
  *
  * Interface to implement in AdapterModule if corresponding items should be swipeable.
  */
-public interface OnSwipeListenerModule<Item extends ModularItem> {
+public interface OnSwipeListenerModule<I extends ModularItem> {
 
     /**
      * @return directions in which item should be swipeable.
@@ -29,7 +29,7 @@ public interface OnSwipeListenerModule<Item extends ModularItem> {
      * @param swipeDir direction of swipe
      * @return text to show in snackbar after swipe
      */
-    String onSwiped(Item item, int swipeDir);
+    String onSwiped(I item, int swipeDir);
 
 
     /**
@@ -38,6 +38,6 @@ public interface OnSwipeListenerModule<Item extends ModularItem> {
      * @param item item for which action was undone.
      * @param swipeDir direction of undone action.
      */
-    void onUndo(Item item, int swipeDir);
+    void onUndo(I item, int swipeDir);
 
 }

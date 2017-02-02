@@ -8,12 +8,12 @@ import com.cuttingedge.undorecycler.ModularItem;
  * Interface to implement in AdapterModule if ItemLongClicks are wanted
  */
 
-public interface OnItemLongClickListenerModule<Item extends ModularItem> {
+public interface OnItemLongClickListenerModule<I extends ModularItem> {
 
     /**
      * Called when item of corresponding adapterModule was long clicked.
      *
      * @param item long clicked item
      */
-    boolean onItemLongClicked(Item item);
+    boolean onItemLongClicked(I item);
 }

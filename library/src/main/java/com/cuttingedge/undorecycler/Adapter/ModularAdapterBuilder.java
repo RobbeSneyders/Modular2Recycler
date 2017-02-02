@@ -3,7 +3,9 @@ package com.cuttingedge.undorecycler.Adapter;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.RecyclerView.ViewHolder;
 
 import com.cuttingedge.undorecycler.ModularItem;
 import com.cuttingedge.undorecycler.R;
@@ -15,10 +17,10 @@ import java.util.List;
  *
  * Builder class for ModularAdapter
  */
-public class ModularAdapterBuilder<Item extends ModularItem> {
+public class ModularAdapterBuilder<I extends ModularItem> {
 
     RecyclerView recyclerView;
-    List<Item> list;
+    List<I> list;
 
     Drawable rightBackground;
     Drawable rightMark;
@@ -32,15 +34,15 @@ public class ModularAdapterBuilder<Item extends ModularItem> {
      * @param recyclerView to which adapter needs to be added.
      * @param list list of items to display. These items need to extend ModularItem.
      */
-    public ModularAdapterBuilder(RecyclerView recyclerView, List<Item> list) {
+    public ModularAdapterBuilder(RecyclerView recyclerView, List<I> list) {
         this.recyclerView = recyclerView;
         this.list = list;
 
         // default values;
         rightBackground = new ColorDrawable(Color.RED);
-        rightMark = recyclerView.getContext().getResources().getDrawable(R.drawable.ic_delete_white_24dp);
+        rightMark = ResourcesCompat.getDrawable(recyclerView.getContext().getResources(), R.drawable.ic_delete_white_24dp, null);
         leftBackground = new ColorDrawable(Color.GREEN);
-        leftMark = recyclerView.getContext().getResources().getDrawable(R.drawable.ic_archive_white_24dp);
+        leftMark = ResourcesCompat.getDrawable(recyclerView.getContext().getResources(), R.drawable.ic_archive_white_24dp, null);
     }
 
 
@@ -77,7 +79,7 @@ public class ModularAdapterBuilder<Item extends ModularItem> {
      *
      * @return built ModularAdapter.
      */
-    public ModularAdapter build() {
-        return new ModularAdapter(this);
+    public <VH extends ViewHolder> ModularAdapter<VH, I> build() {
+        return new ModularAdapter<>(this);
     }
 }

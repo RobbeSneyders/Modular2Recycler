@@ -8,8 +8,8 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 
-import com.cuttingedge.undorecycler.ModularAdapter;
-import com.cuttingedge.undorecycler.ModularAdapter.ModularAdapterBuilder;
+import com.cuttingedge.undorecycler.Adapter.ModularAdapter;
+import com.cuttingedge.undorecycler.Adapter.ModularAdapterBuilder;
 import com.cuttingedge.undorecycler.ModularItem;
 
 import java.util.ArrayList;
@@ -53,13 +53,12 @@ public class BackpackActivity extends BaseActivity implements SwipeCallBack{
 
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         adapter = new ModularAdapterBuilder(recyclerView, list)
-                .setSwipeableLeft(Color.RED, getResources().getDrawable(R.drawable.ic_delete_white_24dp))
-                .setSwipeableRight(Color.GREEN, getResources().getDrawable(R.drawable.ic_cloud_upload_white_24dp))
+                .setSwipeLeft(Color.RED, getResources().getDrawable(R.drawable.ic_delete_white_24dp))
+                .setSwipeRight(Color.GREEN, getResources().getDrawable(R.drawable.ic_cloud_upload_white_24dp))
                 .build();
 
         new PokemonDelegate(this, adapter);
         new HeaderDelegate(adapter);
-        recyclerView.setAdapter(adapter);
     }
 
     /**

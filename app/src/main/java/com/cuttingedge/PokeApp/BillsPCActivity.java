@@ -8,7 +8,8 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 
-import com.cuttingedge.undorecycler.ModularAdapter;
+import com.cuttingedge.undorecycler.Adapter.ModularAdapter;
+import com.cuttingedge.undorecycler.Adapter.ModularAdapterBuilder;
 import com.cuttingedge.undorecycler.ModularItem;
 
 import java.util.List;
@@ -43,9 +44,9 @@ public class BillsPCActivity extends BaseActivity implements SwipeCallBack {
         List<Pokemon> pokemonList = Pokedex.getBillsPCID();
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new ModularAdapter.ModularAdapterBuilder(recyclerView, pokemonList)
-                .setSwipeableLeft(Color.RED, getResources().getDrawable(R.drawable.ic_delete_white_24dp))
-                .setSwipeableRight(Color.GREEN, getResources().getDrawable(R.drawable.ic_cloud_upload_white_24dp))
+        adapter = new ModularAdapterBuilder(recyclerView, pokemonList)
+                .setSwipeLeft(Color.RED, getResources().getDrawable(R.drawable.ic_delete_white_24dp))
+                .setSwipeRight(Color.GREEN, getResources().getDrawable(R.drawable.ic_cloud_upload_white_24dp))
                 .build();
 
         new PokemonDelegate(this, adapter);
@@ -64,9 +65,6 @@ public class BillsPCActivity extends BaseActivity implements SwipeCallBack {
         // swaps the data of the adapter
         adapter.swap(pokemonList);
     }
-
-
-
 
     @Override
     public String onSwiped(Pokemon pokemon, int swipeDir) {

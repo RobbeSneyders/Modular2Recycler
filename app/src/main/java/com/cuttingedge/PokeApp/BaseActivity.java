@@ -12,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 /**
  * This activity is the base_menu for all other activities and handles the drawer layout.
@@ -21,6 +22,8 @@ public abstract class BaseActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     protected Toolbar toolbar;
+
+    private Toast toast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,5 +110,13 @@ public abstract class BaseActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void toast(String message, int duration) {
+        if (toast != null)
+            toast.cancel();
+
+        toast = Toast.makeText(this, message, duration);
+        toast.show();
     }
 }

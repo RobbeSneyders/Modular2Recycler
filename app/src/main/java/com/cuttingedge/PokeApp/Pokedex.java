@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 /**
  * This is a class that simulates the behaviour of a database.
@@ -98,11 +99,21 @@ public class Pokedex {
         }
     }
 
-    public static ArrayList<Pokemon> getAllPokemonAlphabetic() {
+    public static List<Pokemon> getAllPokemonAlphabetic() {
         ArrayList<Pokemon> sortList = new ArrayList<>(pokedex);
         Collections.sort(sortList, new Comparator<Pokemon>(){
             public int compare(Pokemon p1, Pokemon p2) {
                 return p1.name.compareToIgnoreCase(p2.name);
+            }
+        });
+        return sortList;
+    }
+
+    public static ArrayList<Pokemon> getAllPokemonByType() {
+        ArrayList<Pokemon> sortList = new ArrayList<>(pokedex);
+        Collections.sort(sortList, new Comparator<Pokemon>(){
+            public int compare(Pokemon p1, Pokemon p2) {
+                return p1.type.compareToIgnoreCase(p2.type);
             }
         });
         return sortList;

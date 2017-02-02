@@ -1,15 +1,16 @@
 package com.cuttingedge.PokeApp;
 
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 
-import com.cuttingedge.undorecycler.UndoAdapter;
+import com.cuttingedge.undorecycler.ModularAdapter;
+import com.cuttingedge.undorecycler.ModularItem;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,9 +18,9 @@ import java.util.List;
  *
  * Created by Robbe Sneyders on 19/08/2016.
  */
-public class BillsPCActivity extends BaseActivity {
+public class BillsPCActivity extends BaseActivity implements SwipeCallBack {
 
-    BillsPCAdapter adapter;
+    ModularAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,18 +41,15 @@ public class BillsPCActivity extends BaseActivity {
 
         // List is ordered by pokemon id
         List<Pokemon> pokemonList = Pokedex.getBillsPCID();
-        List<UndoAdapter.UndoItem> list = new ArrayList<>();
-
-        for (int i = 0; i < pokemonList.size(); i++) {
-            // no headers used in this adapter
-            UndoAdapter.UndoItem undoItem = new UndoAdapter.UndoItem("", pokemonList.get(i));
-            list.add(i, undoItem);
-        }
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        View rootView = findViewById(R.id.coordinator);
-        // no headers used in this adapter
-        adapter = new BillsPCAdapter(this, list , recyclerView, rootView, false);
+        adapter = new ModularAdapter.ModularAdapterBuilder(recyclerView, pokemonList)
+                .setSwipeableLeft(Color.RED, getResources().getDrawable(R.drawable.ic_delete_white_24dp))
+                .setSwipeableRight(Color.GREEN, getResources().getDrawable(R.drawable.ic_cloud_upload_white_24dp))
+                .build();
+
+        new PokemonDelegate(this, adapter);
+        new HeaderDelegate(adapter);
         recyclerView.setAdapter(adapter);
     }
 
@@ -62,14 +60,34 @@ public class BillsPCActivity extends BaseActivity {
     protected void reset() {
         Pokedex.initiate(this);
 
-        List<Pokemon> pokemonList = Pokedex.getBillsPCID();
-        List<UndoAdapter.UndoItem> list = new ArrayList<>();
-
-        for (int i = 0; i < pokemonList.size(); i++) {
-            UndoAdapter.UndoItem undoItem = new UndoAdapter.UndoItem("", pokemonList.get(i));
-            list.add(i, undoItem);
-        }
+        List<? extends ModularItem> pokemonList = Pokedex.getBillsPCID();
         // swaps the data of the adapter
-        adapter.swap(list);
+        adapter.swap(pokemonList);
+    }
+
+
+
+
+    @Override
+    public String onSwiped(Pokemon pokemon, int swipeDir) {
+        if (swipeDir == ItemTouchHelper.LEFT) {
+            Pokedex.removePokemon(pokemon);
+            return pokemon.name + " was set free";
+        }
+        else if (swipeDir == ItemTouchHelper.RIGHT) {
+            Pokedex.sendToBill(pokemon);
+            return pokemon.name + " was uploaded to Bill's PC";
+        }
+        return null;
+    }
+
+    @Override
+    public void onUndo(Pokemon pokemon, int swipeDir) {
+        if (swipeDir == ItemTouchHelper.LEFT) {
+            Pokedex.addToPokedex(pokemon);
+        }
+        else if (swipeDir == ItemTouchHelper.RIGHT) {
+            Pokedex.getFromBill(pokemon);
+        }
     }
 }

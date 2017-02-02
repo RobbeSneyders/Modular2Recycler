@@ -3,7 +3,8 @@ package com.cuttingedge.undorecycler.Adapter;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.RecyclerView.*;
+import android.support.v7.widget.RecyclerView.Adapter;
+import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 
@@ -12,13 +13,10 @@ import com.cuttingedge.undorecycler.R;
 /**
  * Created by Robbe Sneyders
  *
- * Base adapter class with all code about animation
+ * Base adapter class with all code for the animation of views.
  */
 @SuppressWarnings("WeakerAccess")
 abstract class AnimatedAdapter<VH extends ViewHolder> extends Adapter<VH> {
-
-    private int headerHeight;
-    private int itemHeight;
 
     protected Drawable leftBackground;
     protected Drawable rightBackground;
@@ -26,29 +24,57 @@ abstract class AnimatedAdapter<VH extends ViewHolder> extends Adapter<VH> {
     protected Drawable rightMark;
     private Drawable background;
 
-    protected boolean lastWasUndo;
+    protected boolean lastWasSwiped;
 
     protected RecyclerView recyclerView;
 
+
+    /**
+     * Constructor.
+     *
+     * @param recyclerView recyclerView to which this adapter is connected.
+     */
     public AnimatedAdapter(RecyclerView recyclerView) {
         this.recyclerView = recyclerView;
         setUpItemTouchHelper();
     }
 
+
     /**
-     * Get the directions in which the touched item can be swiped
+     * Get the directions in which the touched item can be swiped.
      *
-     * @param position position of the touched item in the adapter
-     * @return enabled directions: flags ItemTouchHelper.DIRECTION
+     * @param position position of the touched item in the adapter.
+     * @return enabled directions: flags ItemTouchHelper.LEFT or RIGHT.
      */
     protected abstract int getItemSwipeDirs(int position);
+
+
+    /**
+     * Is drag and drop enabled for the touched item?
+     *
+     * @param position position of the touched item in the adapter.
+     * @return true if enabled, false otherwise.
+     */
+    protected abstract boolean isDragDropEnabled(int position);
+
+
+    /**
+     * Called while viewHolder is dragged.
+     *
+     * @param fromPosition current position of viewHolder in adapter.
+     * @param toPosition position of viewHolder which place will be taken.
+     * @return True if the viewHolder has been moved to target position in adapter.
+     */
+    protected abstract boolean onDrag(int fromPosition, int toPosition);
+
 
     /**
      * Called when item is swiped away
      * @param position position of item in adapter
      * @param swipeDir direction of swipe
      */
-    protected abstract void pendingRemoval(int position, int swipeDir);
+    protected abstract void onSwiped(int position, int swipeDir);
+
 
     /**
      * Sets up the ItemTouchHelper and attaches it to the RecyclerView.
@@ -59,6 +85,7 @@ abstract class AnimatedAdapter<VH extends ViewHolder> extends Adapter<VH> {
         setUpAnimationDecoratorHelper(recyclerView);
     }
 
+
     /**
      * Callback used in ItemTouchHelper to draw a background behind the swiped item.
      */
@@ -68,40 +95,73 @@ abstract class AnimatedAdapter<VH extends ViewHolder> extends Adapter<VH> {
         int xMarkMargin;
         boolean initiated;
 
+
+        /**
+         * Margin is loaded from resources during first initialization.
+         */
         private void init() {
             xMarkMargin = (int) recyclerView.getResources().getDimension(R.dimen.ic_clear_margin);
             initiated = true;
         }
 
+
+        /**
+         * Return direction flags for which movement (swipe and drag) is enabled for current ViewHolder.
+         *
+         * @param recyclerView current RecyclerView.
+         * @param viewHolder current ViewHolder.
+         * @return flags.
+         */
         @Override
-        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-            // TODO: Drag & Drop
-            return false;
+        public int getMovementFlags(RecyclerView recyclerView, ViewHolder viewHolder) {
+            int dragFlags = (isDragDropEnabled(viewHolder.getAdapterPosition())) ? ItemTouchHelper.UP | ItemTouchHelper.DOWN : 0;
+            int swipeFlags = getItemSwipeDirs(viewHolder.getAdapterPosition());
+            return makeMovementFlags(dragFlags, swipeFlags);
         }
 
 
+        /**
+         * Called when viewHolder was swiped out of RecyclerView.
+         *
+         * @param viewHolder swiped ViewHolder.
+         * @param swipeDir swipe direction.
+         */
         @Override
-        public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-            return getItemSwipeDirs(viewHolder.getAdapterPosition());
-        }
+        public void onSwiped(ViewHolder viewHolder, int swipeDir) {
+            View v = viewHolder.itemView;
 
-
-        @Override
-        public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
-            headerHeight = 0;
-            itemHeight = viewHolder.itemView.getHeight();
-
-            if (swipeDir == ItemTouchHelper.LEFT) {
+            if (swipeDir == ItemTouchHelper.LEFT)
                 background = rightBackground;
-            } else if (swipeDir == ItemTouchHelper.RIGHT) {
+            else if (swipeDir == ItemTouchHelper.RIGHT)
                 background = leftBackground;
-            }
-            pendingRemoval(viewHolder.getAdapterPosition(), swipeDir);
+
+            background.setBounds(v.getLeft(), v.getTop(), v.getRight(), v.getBottom());
+
+            lastWasSwiped = true;
+            AnimatedAdapter.this.onSwiped(viewHolder.getAdapterPosition(), swipeDir);
         }
 
 
+        /**
+         * Called during drag of ViewHolder.
+         *
+         * @param recyclerView current RecyclerView.
+         * @param viewHolder dragged ViewHolder.
+         * @param target ViewHolder which place will be taken.
+         * @return true if positions are swapped.
+         */
         @Override
-        public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+        public boolean onMove(RecyclerView recyclerView, ViewHolder viewHolder, ViewHolder target) {
+            lastWasSwiped = false;
+            return onDrag(viewHolder.getAdapterPosition(), target.getAdapterPosition());
+        }
+
+
+        /**
+         * Called by ItemTouchHelper on RecyclerView's onDraw callback.
+         */
+        @Override
+        public void onChildDraw(Canvas c, RecyclerView recyclerView, ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
 
             View itemView = viewHolder.itemView;
 
@@ -114,7 +174,7 @@ abstract class AnimatedAdapter<VH extends ViewHolder> extends Adapter<VH> {
 
             if (dX < 0) { // Swiped left
                 // draw background
-                rightBackground.setBounds(itemView.getRight() + (int) dX, itemView.getTop(), itemView.getRight(), itemView.getBottom());
+                rightBackground.setBounds(itemView.getLeft(), itemView.getTop(), itemView.getRight(), itemView.getBottom());
                 rightBackground.draw(c);
 
                 // draw x mark
@@ -132,7 +192,7 @@ abstract class AnimatedAdapter<VH extends ViewHolder> extends Adapter<VH> {
             }
             else if (dX > 0){ // Swiped right
                 // draw background
-                leftBackground.setBounds(itemView.getLeft(), itemView.getTop(), itemView.getLeft() + (int) dX, itemView.getBottom());
+                leftBackground.setBounds(itemView.getLeft(), itemView.getTop(), itemView.getRight() + (int) dX, itemView.getBottom());
                 leftBackground.draw(c);
 
                 // draw x mark
@@ -152,6 +212,7 @@ abstract class AnimatedAdapter<VH extends ViewHolder> extends Adapter<VH> {
         }
     };
 
+
     /**
      * Set up ItemDecorator that draws background while the items are animating to their new place
      * after an item is removed.
@@ -161,67 +222,12 @@ abstract class AnimatedAdapter<VH extends ViewHolder> extends Adapter<VH> {
 
             @Override
             public void onDraw(Canvas c, RecyclerView parent, RecyclerView.State state) {
-
                 // only if animation is in progress
-                if (parent.getItemAnimator().isRunning() && !lastWasUndo) {
-
-                    // some items might be animating down and some items might be animating up to close the gap left by the removed item
-                    // this is not exclusive, both movement can be happening at the same time
-                    // to reproduce this leave just enough items so the first one and the last one would be just a little off screen
-                    // then remove one from the middle
-
-                    // find first child with translationY > 0
-                    // and last one with translationY < 0
-                    // we're after a rect that is not covered in recycler-view views at this point in time
-                    View lastViewComingDown = null;
-                    View firstViewComingUp = null;
-
-                    // this is fixed
-                    int left = 0;
-                    int right = parent.getWidth();
-
-                    // this we need to find out
-                    int top = 0;
-                    int bottom = 0;
-
-                    // find relevant translating views
-                    int childCount = parent.getLayoutManager().getChildCount();
-                    for (int i = 0; i < childCount; i++) {
-                        View child = parent.getLayoutManager().getChildAt(i);
-                        if (child.getTranslationY() < 0) {
-                            // view is coming down
-                            lastViewComingDown = child;
-                        } else if (child.getTranslationY() > 0) {
-                            // view is coming up
-                            if (firstViewComingUp == null) {
-                                firstViewComingUp = child;
-                            }
-                        }
-                    }
-
-                    if (lastViewComingDown != null && firstViewComingUp != null) {
-                        // views are coming down AND going up to fill the void
-                        top = lastViewComingDown.getBottom() + (int) lastViewComingDown.getTranslationY();
-                        bottom = firstViewComingUp.getTop() + (int) firstViewComingUp.getTranslationY();
-                    } else if (lastViewComingDown != null) {
-                        // views are going down to fill the void
-                        top = lastViewComingDown.getBottom() + (int) lastViewComingDown.getTranslationY();
-                        bottom = lastViewComingDown.getBottom();
-                    } else if (firstViewComingUp != null) {
-                        // views are coming up to fill the void
-                        top = firstViewComingUp.getTop();
-                        bottom = firstViewComingUp.getTop() + (int) firstViewComingUp.getTranslationY();
-                    }
-
-                    if (headerHeight == 0)
-                        headerHeight = bottom - top - itemHeight;
-
-                    background.setBounds(left, top + headerHeight, right, bottom);
+                if (lastWasSwiped && parent.getItemAnimator().isRunning()) {
                     background.draw(c);
                 }
                 super.onDraw(c, parent, state);
             }
         });
     }
-
 }

@@ -3,7 +3,7 @@ package com.cuttingedge.PokeApp;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
@@ -51,7 +51,7 @@ public class BackpackActivity extends BaseActivity implements SwipeCallBack{
         isAlphabetic = true;
         List<ModularItem> list = addHeaders(pokemonList);
 
-        recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new ModularAdapterBuilder(recyclerView, list)
                 .setSwipeLeft(Color.RED, getResources().getDrawable(R.drawable.ic_delete_white_24dp))
                 .setSwipeRight(Color.GREEN, getResources().getDrawable(R.drawable.ic_cloud_upload_white_24dp))

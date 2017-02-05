@@ -1,4 +1,4 @@
-package com.cuttingedge.undorecycler.Adapter;
+package com.cuttingedge.adapter2recycler.Adapter;
 
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
@@ -8,7 +8,7 @@ import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 
-import com.cuttingedge.undorecycler.R;
+import com.cuttingedge.adapter2recycler.R;
 
 /**
  * Created by Robbe Sneyders
@@ -55,7 +55,7 @@ abstract class AnimatedAdapter<VH extends ViewHolder> extends Adapter<VH> {
      * @param position position of the touched item in the adapter.
      * @return true if enabled, false otherwise.
      */
-    protected abstract boolean isDragDropEnabled(int position);
+    protected abstract int getDragDirs(int position);
 
 
     /**
@@ -114,7 +114,7 @@ abstract class AnimatedAdapter<VH extends ViewHolder> extends Adapter<VH> {
          */
         @Override
         public int getMovementFlags(RecyclerView recyclerView, ViewHolder viewHolder) {
-            int dragFlags = (isDragDropEnabled(viewHolder.getAdapterPosition())) ? ItemTouchHelper.UP | ItemTouchHelper.DOWN : 0;
+            int dragFlags = AnimatedAdapter.this.getDragDirs(viewHolder.getAdapterPosition());
             int swipeFlags = getItemSwipeDirs(viewHolder.getAdapterPosition());
             return makeMovementFlags(dragFlags, swipeFlags);
         }
@@ -163,6 +163,11 @@ abstract class AnimatedAdapter<VH extends ViewHolder> extends Adapter<VH> {
         @Override
         public void onChildDraw(Canvas c, RecyclerView recyclerView, ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
 
+            if (actionState != ItemTouchHelper.ACTION_STATE_SWIPE) {
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+                return;
+            }
+
             View itemView = viewHolder.itemView;
 
             // not sure why, but this method get's called for viewholder that are already swiped away
@@ -184,15 +189,14 @@ abstract class AnimatedAdapter<VH extends ViewHolder> extends Adapter<VH> {
 
                 int xMarkLeft = itemView.getRight() - xMarkMargin - intrinsicWidth;
                 int xMarkRight = itemView.getRight() - xMarkMargin;
-                int xMarkTop = itemView.getTop() + (itemHeight - intrinsicHeight)/2;
+                int xMarkTop = itemView.getTop() + (itemHeight - intrinsicHeight) / 2;
                 int xMarkBottom = xMarkTop + intrinsicHeight;
 
                 rightMark.setBounds(xMarkLeft, xMarkTop, xMarkRight, xMarkBottom);
                 rightMark.draw(c);
-            }
-            else if (dX > 0){ // Swiped right
+            } else if (dX > 0) { // Swiped right
                 // draw background
-                leftBackground.setBounds(itemView.getLeft(), itemView.getTop(), itemView.getRight() + (int) dX, itemView.getBottom());
+                leftBackground.setBounds(itemView.getLeft(), itemView.getTop(), itemView.getRight(), itemView.getBottom());
                 leftBackground.draw(c);
 
                 // draw x mark
@@ -202,7 +206,7 @@ abstract class AnimatedAdapter<VH extends ViewHolder> extends Adapter<VH> {
 
                 int xMarkLeft = itemView.getLeft() + xMarkMargin;
                 int xMarkRight = itemView.getLeft() + xMarkMargin + intrinsicWidth;
-                int xMarkTop = itemView.getTop() + (itemHeight - intrinsicHeight)/2;
+                int xMarkTop = itemView.getTop() + (itemHeight - intrinsicHeight) / 2;
                 int xMarkBottom = xMarkTop + intrinsicHeight;
 
                 leftMark.setBounds(xMarkLeft, xMarkTop, xMarkRight, xMarkBottom);
@@ -218,6 +222,7 @@ abstract class AnimatedAdapter<VH extends ViewHolder> extends Adapter<VH> {
      * after an item is removed.
      */
     private void setUpAnimationDecoratorHelper(RecyclerView recycler) {
+
         recycler.addItemDecoration(new RecyclerView.ItemDecoration() {
 
             @Override

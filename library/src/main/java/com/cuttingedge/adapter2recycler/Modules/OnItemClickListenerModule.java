@@ -1,6 +1,6 @@
-package com.cuttingedge.undorecycler.Modules;
+package com.cuttingedge.adapter2recycler.Modules;
 
-import com.cuttingedge.undorecycler.ModularItem;
+import com.cuttingedge.adapter2recycler.ModularItem;
 
 /**
  * Created by Robbe Sneyders

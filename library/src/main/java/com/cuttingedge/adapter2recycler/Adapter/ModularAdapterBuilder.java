@@ -1,14 +1,12 @@
-package com.cuttingedge.undorecycler.Adapter;
+package com.cuttingedge.adapter2recycler.Adapter;
 
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 
-import com.cuttingedge.undorecycler.ModularItem;
-import com.cuttingedge.undorecycler.R;
+import com.cuttingedge.adapter2recycler.ModularItem;
 
 import java.util.List;
 
@@ -22,10 +20,10 @@ public class ModularAdapterBuilder<I extends ModularItem> {
     RecyclerView recyclerView;
     List<I> list;
 
-    Drawable rightBackground;
-    Drawable rightMark;
-    Drawable leftBackground;
-    Drawable leftMark;
+    Drawable rightBackground = new ColorDrawable(Color.TRANSPARENT);
+    Drawable rightMark = new ColorDrawable(Color.TRANSPARENT);
+    Drawable leftBackground = new ColorDrawable(Color.TRANSPARENT);
+    Drawable leftMark = new ColorDrawable(Color.TRANSPARENT);
 
 
     /**
@@ -37,12 +35,6 @@ public class ModularAdapterBuilder<I extends ModularItem> {
     public ModularAdapterBuilder(RecyclerView recyclerView, List<I> list) {
         this.recyclerView = recyclerView;
         this.list = list;
-
-        // default values;
-        rightBackground = new ColorDrawable(Color.RED);
-        rightMark = ResourcesCompat.getDrawable(recyclerView.getContext().getResources(), R.drawable.ic_delete_white_24dp, null);
-        leftBackground = new ColorDrawable(Color.GREEN);
-        leftMark = ResourcesCompat.getDrawable(recyclerView.getContext().getResources(), R.drawable.ic_archive_white_24dp, null);
     }
 
 
@@ -53,7 +45,7 @@ public class ModularAdapterBuilder<I extends ModularItem> {
      * @param icon icon drawn behind view
      * @return builder
      */
-    public ModularAdapterBuilder setSwipeLeft(int color, Drawable icon) {
+    public ModularAdapterBuilder<I> setSwipeLeft(int color, Drawable icon) {
         rightBackground = new ColorDrawable(color);
         rightMark = icon;
         return this;
@@ -67,7 +59,7 @@ public class ModularAdapterBuilder<I extends ModularItem> {
      * @param icon icon drawn behind view
      * @return builder
      */
-    public ModularAdapterBuilder setSwipeRight(int color, Drawable icon) {
+    public ModularAdapterBuilder<I> setSwipeRight(int color, Drawable icon) {
         leftBackground = new ColorDrawable(color);
         leftMark = icon;
         return this;

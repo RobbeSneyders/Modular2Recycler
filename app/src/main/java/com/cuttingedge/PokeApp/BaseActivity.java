@@ -14,7 +14,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.cuttingedge.PokeApp.Backpack.BackpackActivity;
+import com.cuttingedge.PokeApp.BillsPC.BillsPCActivity;
+
 /**
+ * Created by Robbe Sneyders
+ *
  * This activity is the base_menu for all other activities and handles the drawer layout.
  * This activity is not important for the library.
  */
@@ -40,6 +45,8 @@ public abstract class BaseActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        Pokedex.setup(this);
     }
 
     @Override

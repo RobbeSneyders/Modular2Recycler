@@ -1,28 +1,33 @@
-package com.cuttingedge.PokeApp;
+package com.cuttingedge.PokeApp.Backpack;
 
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
+import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.View;
 
-import com.cuttingedge.undorecycler.Adapter.ModularAdapter;
-import com.cuttingedge.undorecycler.Adapter.ModularAdapterBuilder;
-import com.cuttingedge.undorecycler.ModularItem;
+import com.cuttingedge.PokeApp.BaseActivity;
+import com.cuttingedge.PokeApp.Pokedex;
+import com.cuttingedge.PokeApp.Pokemon;
+import com.cuttingedge.PokeApp.R;
+import com.cuttingedge.adapter2recycler.Adapter.ModularAdapter;
+import com.cuttingedge.adapter2recycler.Adapter.ModularAdapterBuilder;
+import com.cuttingedge.adapter2recycler.ModularItem;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Activity that sets up the RecyclerView.
+ * Created by Robbe Sneyders
  *
- * Created by Robbe Sneyders on 19/08/2016.
+ * Activity to handle backpack section in app
  */
-public class BackpackActivity extends BaseActivity implements SwipeCallBack{
+public class BackpackActivity extends BaseActivity {
 
-    private ModularAdapter adapter;
+    private ModularAdapter<ViewHolder, ModularItem> adapter;
     private boolean isAlphabetic;
 
     FloatingActionButton fab;
@@ -43,23 +48,28 @@ public class BackpackActivity extends BaseActivity implements SwipeCallBack{
         setupList();
     }
 
+
+    /**
+     * Sets up the RecyclerView and Adapter
+     */
     private void setupList() {
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler);
 
-        Pokedex.setup(this);
         List<Pokemon> pokemonList = Pokedex.getAllPokemonAlphabetic();
         isAlphabetic = true;
         List<ModularItem> list = addHeaders(pokemonList);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new ModularAdapterBuilder(recyclerView, list)
-                .setSwipeLeft(Color.RED, getResources().getDrawable(R.drawable.ic_delete_white_24dp))
-                .setSwipeRight(Color.GREEN, getResources().getDrawable(R.drawable.ic_cloud_upload_white_24dp))
+
+        adapter = new ModularAdapterBuilder<>(recyclerView, list)
+                .setSwipeLeft(Color.RED, ResourcesCompat.getDrawable(getResources(), R.drawable.ic_delete_white_24dp, null))
+                .setSwipeRight(Color.GREEN, ResourcesCompat.getDrawable(getResources(), R.drawable.ic_cloud_upload_white_24dp, null))
                 .build();
 
-        new PokemonDelegate(this, adapter);
-        new HeaderDelegate(adapter);
+        new PokemonBackPackModule(this, adapter);
+        new HeaderModule(adapter);
     }
+
 
     /**
      * Toggles headers between type and alphabetic
@@ -81,6 +91,13 @@ public class BackpackActivity extends BaseActivity implements SwipeCallBack{
         adapter.swap(list);
     }
 
+
+    /**
+     * Adds alphabetic or type headers to a list of pokemon.
+     *
+     * @param list List of pokemon to which headers should be added.
+     * @return List with headers inserted.
+     */
     public List<ModularItem> addHeaders(List<Pokemon> list) {
         List<ModularItem> newList = new ArrayList<>();
         if (list.size() == 0)
@@ -110,34 +127,14 @@ public class BackpackActivity extends BaseActivity implements SwipeCallBack{
         return newList;
     }
 
-    // Reset database and get new list
+
+    /**
+     * Reset pokedex and get new list
+     */
     @Override
     protected void reset() {
         Pokedex.initiate(this);
         isAlphabetic = !isAlphabetic;
         toggleAlphabetic();
-    }
-
-    @Override
-    public String onSwiped(Pokemon pokemon, int swipeDir) {
-        if (swipeDir == ItemTouchHelper.LEFT) {
-            Pokedex.removePokemon(pokemon);
-            return pokemon.name + " was set free";
-        }
-        else if (swipeDir == ItemTouchHelper.RIGHT) {
-            Pokedex.sendToBill(pokemon);
-            return pokemon.name + " was uploaded to Bill's PC";
-        }
-        return null;
-    }
-
-    @Override
-    public void onUndo(Pokemon pokemon, int swipeDir) {
-        if (swipeDir == ItemTouchHelper.LEFT) {
-            Pokedex.addToPokedex(pokemon);
-        }
-        else if (swipeDir == ItemTouchHelper.RIGHT) {
-            Pokedex.getFromBill(pokemon);
-        }
     }
 }

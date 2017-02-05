@@ -1,10 +1,10 @@
-package com.cuttingedge.undorecycler.Modules;
+package com.cuttingedge.adapter2recycler.Modules;
 
 import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.ViewGroup;
 
-import com.cuttingedge.undorecycler.Adapter.ModularAdapter;
-import com.cuttingedge.undorecycler.ModularItem;
+import com.cuttingedge.adapter2recycler.Adapter.ModularAdapter;
+import com.cuttingedge.adapter2recycler.ModularItem;
 
 import java.lang.reflect.ParameterizedType;
 

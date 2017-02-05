@@ -1,6 +1,7 @@
 package com.cuttingedge.PokeApp;
 
 import android.content.Context;
+import android.support.v4.content.res.ResourcesCompat;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -14,32 +15,28 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
+ * Created by Robbe on 19/08/2016.
+ *
  * This is a class that simulates the behaviour of a database.
  * Implementation of this class is not important for library!
- *
- * Created by Robbe on 19/08/2016.
  */
 public class Pokedex {
 
     private static ArrayList<Pokemon> pokedex;
     private static ArrayList<Pokemon> billsPC;
-
-    private static Context context;
-
     private static boolean initiated;
 
-    public static void setup(Context mContext) {
+    static void setup(Context mContext) {
         if (!initiated)
             initiate(mContext);
     }
 
-    public static void initiate(Context mContext) {
-        context = mContext;
-        setupParser();
+    public static void initiate(Context context) {
+        setupParser(context);
         initiated = true;
     }
 
-    private static void setupParser() {
+    private static void setupParser(Context context) {
         XmlPullParserFactory pullParserFactory;
         try {
             pullParserFactory = XmlPullParserFactory.newInstance();
@@ -49,20 +46,18 @@ public class Pokedex {
             parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
             parser.setInput(in_s, null);
 
-            parseXML(parser);
-        } catch (XmlPullParserException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+            parseXML(context, parser);
+        } catch (XmlPullParserException | IOException e) {
             e.printStackTrace();
         }
     }
 
-    private static void parseXML(XmlPullParser parser) throws XmlPullParserException,IOException {
+    private static void parseXML(Context context, XmlPullParser parser) throws XmlPullParserException,IOException {
         int eventType = parser.getEventType();
         Pokemon currentPokemon = null;
 
         while (eventType != XmlPullParser.END_DOCUMENT) {
-            String name = null;
+            String name;
             switch (eventType) {
                 case XmlPullParser.START_DOCUMENT:
                     pokedex = new ArrayList<>();
@@ -76,7 +71,7 @@ public class Pokedex {
                         switch (name) {
                             case "id":
                                 currentPokemon.id = Integer.parseInt(parser.nextText());
-                                currentPokemon.icon = context.getResources().getDrawable(context.getResources().getIdentifier("p" + String.valueOf(currentPokemon.id), "drawable", context.getPackageName()));
+                                currentPokemon.icon = ResourcesCompat.getDrawable(context.getResources(), context.getResources().getIdentifier("p" + String.valueOf(currentPokemon.id), "drawable", context.getPackageName()), null);
                                 break;
                             case "name":
                                 String next = parser.nextText();

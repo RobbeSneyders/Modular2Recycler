@@ -1,9 +1,9 @@
-package com.cuttingedge.undorecycler.Helpers;
+package com.cuttingedge.adapter2recycler.Helpers;
 
 import android.support.v7.widget.RecyclerView.ViewHolder;
 
-import com.cuttingedge.undorecycler.ModularItem;
-import com.cuttingedge.undorecycler.Modules.AdapterModule;
+import com.cuttingedge.adapter2recycler.ModularItem;
+import com.cuttingedge.adapter2recycler.Modules.AdapterModule;
 
 import java.util.Map;
 import java.util.TreeMap;

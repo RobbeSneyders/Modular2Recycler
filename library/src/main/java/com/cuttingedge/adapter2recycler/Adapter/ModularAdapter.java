@@ -1,4 +1,4 @@
-package com.cuttingedge.undorecycler.Adapter;
+package com.cuttingedge.adapter2recycler.Adapter;
 
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView.ViewHolder;
@@ -7,13 +7,13 @@ import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 
-import com.cuttingedge.undorecycler.Helpers.AdapterModuleManager;
-import com.cuttingedge.undorecycler.ModularItem;
-import com.cuttingedge.undorecycler.Modules.AdapterModule;
-import com.cuttingedge.undorecycler.Modules.DragAndDropModule;
-import com.cuttingedge.undorecycler.Modules.OnItemClickListenerModule;
-import com.cuttingedge.undorecycler.Modules.OnItemLongClickListenerModule;
-import com.cuttingedge.undorecycler.Modules.OnSwipeListenerModule;
+import com.cuttingedge.adapter2recycler.Helpers.AdapterModuleManager;
+import com.cuttingedge.adapter2recycler.ModularItem;
+import com.cuttingedge.adapter2recycler.Modules.AdapterModule;
+import com.cuttingedge.adapter2recycler.Modules.DragAndDropModule;
+import com.cuttingedge.adapter2recycler.Modules.OnItemClickListenerModule;
+import com.cuttingedge.adapter2recycler.Modules.OnItemLongClickListenerModule;
+import com.cuttingedge.adapter2recycler.Modules.OnSwipeListenerModule;
 
 import java.util.Collections;
 import java.util.List;
@@ -217,15 +217,17 @@ public class ModularAdapter<VH extends ViewHolder, I extends ModularItem> extend
 
 
     /**
-     * Is drag and drop enabled for item at current position?
+     * Get enabled drag directions for the item at the given position.
      *
-     * @param position position of item in adapter.
-     * @return true if enabled, false otherwise.
+     * @param position position of the touched item in the adapter
+     * @return enabled drag directions: ItemTouchHelper.DIRECTION
      */
     @Override
-    protected boolean isDragDropEnabled(int position) {
+    protected int getDragDirs(int position) {
         AdapterModule<VH, I> module = adapterModuleManager.getAdapterModule(getItemViewType(position));
-        return (module instanceof DragAndDropModule);
+        if (module instanceof DragAndDropModule)
+            return ((DragAndDropModule) module).getDragDirs();
+        return 0;
     }
 
 
@@ -240,7 +242,7 @@ public class ModularAdapter<VH extends ViewHolder, I extends ModularItem> extend
     protected boolean onDrag(int fromPosition, int toPosition) {
         AdapterModule<VH, I> module = adapterModuleManager.getAdapterModule(getItemViewType(fromPosition));
         DragAndDropModule dragNdrop = (DragAndDropModule) module;
-        boolean stayInSection = dragNdrop.getStayInSection();
+        boolean stayInSection = dragNdrop.keepDragInSection();
 
         if (fromPosition < toPosition) {
             for (int i = fromPosition; i < toPosition; i++) {

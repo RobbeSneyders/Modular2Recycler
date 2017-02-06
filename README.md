@@ -52,7 +52,7 @@ Add this library as dependency to your project:
 
 ```
 dependencies {
-        compile 'com.github.RobbeSneyders:Modular²Recycler:v1.0'
+        compile 'com.github.RobbeSneyders:Modular2Recycler:v1.0'
 }
 ```
 

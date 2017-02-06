@@ -4,7 +4,7 @@ Modular²Recycler is a `RecyclerView.Adapter` that is modular *squared*.
 
 ## Design Pattern
 
-This library uses the approach of [Modular design](https://en.wikipedia.org/wiki/Modular_design), in which a system is subdivided into modular, reusable components. It makes use of both the [composition](https://en.wikipedia.org/wiki/Object_composition) and [aggregation](https://en.wikipedia.org/wiki/Object_composition#Aggregation) pattern. A detailed explanation about the architecture of this library can be read [here](https://robbesneyders.github.io/Modular²Recycler).
+This library uses the approach of [Modular design](https://en.wikipedia.org/wiki/Modular_design), in which a system is subdivided into modular, reusable components. It makes use of both the [composition](https://en.wikipedia.org/wiki/Object_composition) and [aggregation](https://en.wikipedia.org/wiki/Object_composition#Aggregation) pattern. A detailed explanation about the architecture of this library can be read [here](https://robbesneyders.github.io/Modular2Recycler).
 
 The ² in Modular²Recycler denotes the modularity of the adapter on two separate levels.
 
@@ -52,7 +52,7 @@ Add this library as dependency to your project:
 
 ```
 dependencies {
-        compile 'com.github.RobbeSneyders:Modular²Recycler:v1.0'
+        compile 'com.github.RobbeSneyders:Modular2Recycler:v1.0'
 }
 ```
 

@@ -10,10 +10,10 @@ import android.view.ViewGroup;
 import com.cuttingedge.adapter2recycler.Helpers.AdapterModuleManager;
 import com.cuttingedge.adapter2recycler.ModularItem;
 import com.cuttingedge.adapter2recycler.Modules.AdapterModule;
-import com.cuttingedge.adapter2recycler.Modules.DragAndDropModule;
-import com.cuttingedge.adapter2recycler.Modules.OnItemClickListenerModule;
-import com.cuttingedge.adapter2recycler.Modules.OnItemLongClickListenerModule;
-import com.cuttingedge.adapter2recycler.Modules.OnSwipeListenerModule;
+import com.cuttingedge.adapter2recycler.Modules.DragAndDropPlugin;
+import com.cuttingedge.adapter2recycler.Modules.ItemClickPlugin;
+import com.cuttingedge.adapter2recycler.Modules.ItemLongClickPlugin;
+import com.cuttingedge.adapter2recycler.Modules.SwipePlugin;
 
 import java.util.Collections;
 import java.util.List;
@@ -210,8 +210,8 @@ public class ModularAdapter<VH extends ViewHolder, I extends ModularItem> extend
     @Override
     protected int getItemSwipeDirs(int position) {
         AdapterModule<VH, I> module = adapterModuleManager.getAdapterModule(getItemViewType(position));
-        if (module instanceof OnSwipeListenerModule)
-            return ((OnSwipeListenerModule) module).getSwipeDirs();
+        if (module instanceof SwipePlugin)
+            return ((SwipePlugin) module).getSwipeDirs();
         return 0;
     }
 
@@ -225,8 +225,8 @@ public class ModularAdapter<VH extends ViewHolder, I extends ModularItem> extend
     @Override
     protected int getDragDirs(int position) {
         AdapterModule<VH, I> module = adapterModuleManager.getAdapterModule(getItemViewType(position));
-        if (module instanceof DragAndDropModule)
-            return ((DragAndDropModule) module).getDragDirs();
+        if (module instanceof DragAndDropPlugin)
+            return ((DragAndDropPlugin) module).getDragDirs();
         return 0;
     }
 
@@ -241,7 +241,7 @@ public class ModularAdapter<VH extends ViewHolder, I extends ModularItem> extend
     @Override
     protected boolean onDrag(int fromPosition, int toPosition) {
         AdapterModule<VH, I> module = adapterModuleManager.getAdapterModule(getItemViewType(fromPosition));
-        DragAndDropModule dragNdrop = (DragAndDropModule) module;
+        DragAndDropPlugin dragNdrop = (DragAndDropPlugin) module;
         boolean stayInSection = dragNdrop.keepDragInSection();
 
         if (fromPosition < toPosition) {
@@ -292,7 +292,7 @@ public class ModularAdapter<VH extends ViewHolder, I extends ModularItem> extend
             notifyItemRemoved(position);
         }
 
-        OnSwipeListenerModule<I> swipeListener = (OnSwipeListenerModule<I>) module;
+        SwipePlugin<I> swipeListener = (SwipePlugin<I>) module;
         boolean undoEnabled = (swipeListener.getUndoDirs() & swipeDir) == swipeDir;
         showSnackbar(swipeListener.onSwiped(pendingRemovalItem, swipeDir), undoEnabled);
     }
@@ -317,7 +317,7 @@ public class ModularAdapter<VH extends ViewHolder, I extends ModularItem> extend
         }
 
         AdapterModule<VH, I> module = adapterModuleManager.getAdapterModule(adapterModuleManager.getViewType(pendingRemovalItem));
-        OnSwipeListenerModule<I> swipeListener = (OnSwipeListenerModule<I>) module;
+        SwipePlugin<I> swipeListener = (SwipePlugin<I>) module;
 
         swipeListener.onUndo(pendingRemovalItem, pendingRemovalSwipeDir);
     }
@@ -344,7 +344,7 @@ public class ModularAdapter<VH extends ViewHolder, I extends ModularItem> extend
 
 
     /**
-     * OnClickListener to forward clicks to OnItemClickListenerModule
+     * OnClickListener to forward clicks to ItemClickPlugin
      */
     @SuppressWarnings("unchecked")
     private OnClickListener onClickListener = new OnClickListener() {
@@ -352,14 +352,14 @@ public class ModularAdapter<VH extends ViewHolder, I extends ModularItem> extend
         public void onClick(View v) {
             ViewHolder viewHolder = recyclerView.getChildViewHolder(v);
             AdapterModule<VH, I> module = adapterModuleManager.getAdapterModule(viewHolder.getItemViewType());
-            if (module instanceof OnItemClickListenerModule)
-                ((OnItemClickListenerModule<I>) module).onItemClicked(list.get(viewHolder.getAdapterPosition()));
+            if (module instanceof ItemClickPlugin)
+                ((ItemClickPlugin<I>) module).onItemClicked(list.get(viewHolder.getAdapterPosition()));
         }
     };
 
 
     /**
-     * OnLongClickListener to forward clicks to OnItemLongClickListenerModule
+     * OnLongClickListener to forward clicks to ItemLongClickPlugin
      */
     @SuppressWarnings("unchecked")
     private OnLongClickListener onLongClickListener = new OnLongClickListener() {
@@ -367,8 +367,8 @@ public class ModularAdapter<VH extends ViewHolder, I extends ModularItem> extend
         public boolean onLongClick(View v) {
             ViewHolder viewHolder = recyclerView.getChildViewHolder(v);
             AdapterModule module = adapterModuleManager.getAdapterModule(viewHolder.getItemViewType());
-            return module instanceof OnItemClickListenerModule &&
-                    ((OnItemLongClickListenerModule<I>) module).onItemLongClicked(list.get(viewHolder.getAdapterPosition()));
+            return module instanceof ItemClickPlugin &&
+                    ((ItemLongClickPlugin<I>) module).onItemLongClicked(list.get(viewHolder.getAdapterPosition()));
         }
     };
 }

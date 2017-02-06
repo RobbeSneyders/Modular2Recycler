@@ -10,8 +10,8 @@ import android.widget.TextView;
 
 import com.cuttingedge.adapter2recycler.Adapter.ModularAdapter;
 import com.cuttingedge.adapter2recycler.Modules.AdapterModule;
-import com.cuttingedge.adapter2recycler.Modules.DragAndDropModule;
-import com.cuttingedge.adapter2recycler.Modules.OnSwipeListenerModule;
+import com.cuttingedge.adapter2recycler.Modules.DragAndDropPlugin;
+import com.cuttingedge.adapter2recycler.Modules.SwipePlugin;
 
 /**
  * Created by Robbe Sneyders
@@ -20,7 +20,7 @@ import com.cuttingedge.adapter2recycler.Modules.OnSwipeListenerModule;
  */
 public abstract class PokemonModule<VH extends PokemonModule.PokemonViewHolder, P extends Pokemon>
         extends AdapterModule<PokemonModule.PokemonViewHolder, Pokemon>
-        implements OnSwipeListenerModule<Pokemon>, DragAndDropModule {
+        implements SwipePlugin<Pokemon>, DragAndDropPlugin {
 
 
     /*************************
@@ -45,7 +45,7 @@ public abstract class PokemonModule<VH extends PokemonModule.PokemonViewHolder, 
 
 
     /*********************************
-     * OnSwipeListenerModule methods *
+     * SwipePlugin methods *
      *********************************/
 
     @Override
@@ -60,7 +60,7 @@ public abstract class PokemonModule<VH extends PokemonModule.PokemonViewHolder, 
 
 
     /*************************************
-     * DragAndDropModule methods *
+     * DragAndDropPlugin methods *
      *************************************/
 
     @Override

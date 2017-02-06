@@ -12,8 +12,8 @@ import com.cuttingedge.PokeApp.Pokemon;
 import com.cuttingedge.PokeApp.PokemonModule;
 import com.cuttingedge.PokeApp.R;
 import com.cuttingedge.adapter2recycler.Adapter.ModularAdapter;
-import com.cuttingedge.adapter2recycler.Modules.OnItemClickListenerModule;
-import com.cuttingedge.adapter2recycler.Modules.OnItemLongClickListenerModule;
+import com.cuttingedge.adapter2recycler.Modules.ItemClickPlugin;
+import com.cuttingedge.adapter2recycler.Modules.ItemLongClickPlugin;
 
 /**
  * Created by Robbe Sneyders
@@ -21,7 +21,7 @@ import com.cuttingedge.adapter2recycler.Modules.OnItemLongClickListenerModule;
  * Module to handle the behaviour of the Pokemon item in the backpack context
  */
 class PokemonBackPackModule extends PokemonModule<PokemonModule.PokemonViewHolder, Pokemon>
-        implements OnItemClickListenerModule<Pokemon>, OnItemLongClickListenerModule<Pokemon> {
+        implements ItemClickPlugin<Pokemon>, ItemLongClickPlugin<Pokemon> {
 
     private Context context;
 
@@ -49,7 +49,7 @@ class PokemonBackPackModule extends PokemonModule<PokemonModule.PokemonViewHolde
 
 
     /*************************************
-     * OnItemClickListenerModule methods *
+     * ItemClickPlugin methods *
      *************************************/
 
     @Override
@@ -59,7 +59,7 @@ class PokemonBackPackModule extends PokemonModule<PokemonModule.PokemonViewHolde
 
 
     /*****************************************
-     * OnItemLongClickListenerModule methods *
+     * ItemLongClickPlugin methods *
      *****************************************/
 
     @Override
@@ -70,7 +70,7 @@ class PokemonBackPackModule extends PokemonModule<PokemonModule.PokemonViewHolde
 
 
     /*********************************
-     * OnSwipeListenerModule methods *
+     * SwipePlugin methods *
      *********************************/
 
     @Override

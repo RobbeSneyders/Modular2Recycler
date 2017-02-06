@@ -34,7 +34,7 @@ class PokemonBillsPCModule extends PokemonModule<PokemonModule.PokemonViewHolder
 
 
     /*********************************
-     * OnSwipeListenerModule methods *
+     * SwipePlugin methods *
      *********************************/
 
 

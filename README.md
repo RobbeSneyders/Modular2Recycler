@@ -12,14 +12,14 @@ The ² in Modular²Recycler denotes the modularity of the adapter on two separat
 
 Instead of creating one huge adapter to populate a `RecyclerView` with our data, we create an __AdapterModule__ for each different viewtype. The composition (or better: aggregation) of these __AdapterModules__ is handled by this library.
 
-<img src="art/Modular_level_1.png" alt="Modular level 1" width="300">  
+<img src="docs/art/Modular_level_1.png" alt="Modular level 1" width="300">  
 Figure 1: Aggregation of __AdapterModules__ into ModularAdapter.
 
 ### Second level
 
 On the second level, these __AdapterModules__ are modular themselves. They consist of a fundament: the class __AdapterModule__, which they should inherit from. Reusable components can be added to this fundament to add certain functionalities. These reusable components are offered by this library in the form of __Plugins__ which are implemented as `Interfaces`.
 
-<img src="art/Modular_level_2.png" alt="Modular level 2" width="250">  
+<img src="docs/art/Modular_level_2.png" alt="Modular level 2" width="250">  
 Figure 2: Composition of __Plugins__ into __AdapterModule__.
 
 #### Available plugins
@@ -75,7 +75,7 @@ public class Pokemon extends ModularItem {
     public Drawable icon;
 }
 
-class PokemonModule extends ModuleAdapter<PokemonViewHolder> {
+class PokemonModule extends AdapterModule<PokemonViewHolder, Pokemon> {
 
     public PokemonModule(ModularAdapter adapter) {
         super(adapter);
@@ -151,7 +151,7 @@ class HeaderModule extends AdapterModule<HeaderModule.HeaderViewHolder, Header> 
 __2.__ Add the desired functionality to your module by implementing the corresponding __plugins__.
 
 ```
-public class PokemonModule extends ModuleAdapter<PokemonViewHolder>
+public class PokemonModule extends AdapterModule<PokemonViewHolder, Pokemon>
     implements ItemClickPlugin, ItemLongClickPlugin {
 
     // AdapterModule Methods
@@ -187,13 +187,13 @@ __5.__ Create an instance of the __AdapterModules__ you want to add and pass in 
 
 ```
 new PokemonModule(adapter);
-new HeaderModule(header);
+new HeaderModule(adapter);
 ```
 
 ## Example App
 
 PokéApp is an example app to demonstrate the use of this library.  
-- [Code](app) 
+- [Code](app)  
 - [Available on Play Store](https://play.google.com/store/apps/details?id=com.cuttingedge.pokeApp).
 
 [![UndoRecycler](http://i.imgur.com/jFQTroq.gif)](http://imgur.com/jFQTroq) [![UndoRecyclerAlphabetic](http://i.imgur.com/5bgXPR2.gif)](http://imgur.com/5bgXPR2)

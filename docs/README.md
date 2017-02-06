@@ -204,7 +204,7 @@ public class PokemonModule extends AdapterModule<PokemonViewHolder, Pokemon>
 }
 ```
 
-<img src="art/Item_click.png" alt="Item long click" width="250">
+<img src="art/Item_long_click.png" alt="Item long click" width="250">
 
 ### Other plugins
 

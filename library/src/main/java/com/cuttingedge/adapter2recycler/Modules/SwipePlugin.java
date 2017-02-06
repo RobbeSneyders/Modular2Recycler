@@ -7,7 +7,7 @@ import com.cuttingedge.adapter2recycler.ModularItem;
  *
  * Interface to implement in AdapterModule if corresponding items should be swipeable.
  */
-public interface OnSwipeListenerModule<I extends ModularItem> {
+public interface SwipePlugin<I extends ModularItem> {
 
     /**
      * @return directions in which item should be swipeable.

@@ -7,7 +7,7 @@ import com.cuttingedge.adapter2recycler.ModularItem;
  *
  * Interface to implement in AdapterModule if ItemClicks are wanted
  */
-public interface OnItemClickListenerModule<I extends ModularItem> {
+public interface ItemClickPlugin<I extends ModularItem> {
 
     /**
      * Called when item of corresponding adapterModule was clicked.

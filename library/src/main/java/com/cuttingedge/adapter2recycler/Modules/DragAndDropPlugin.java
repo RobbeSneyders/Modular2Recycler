@@ -5,7 +5,7 @@ package com.cuttingedge.adapter2recycler.Modules;
  *
  * Interface to implement in AdapterModule if corresponding items should be draggable.
  */
-public interface DragAndDropModule {
+public interface DragAndDropPlugin {
 
     /**
      * @return true if item should not be draggable across headers.

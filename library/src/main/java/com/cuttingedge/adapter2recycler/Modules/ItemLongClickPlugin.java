@@ -8,7 +8,7 @@ import com.cuttingedge.adapter2recycler.ModularItem;
  * Interface to implement in AdapterModule if ItemLongClicks are wanted
  */
 
-public interface OnItemLongClickListenerModule<I extends ModularItem> {
+public interface ItemLongClickPlugin<I extends ModularItem> {
 
     /**
      * Called when item of corresponding adapterModule was long clicked.

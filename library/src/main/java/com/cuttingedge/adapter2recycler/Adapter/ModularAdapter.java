@@ -246,7 +246,7 @@ public class ModularAdapter<VH extends ViewHolder, I extends ModularItem> extend
 
         if (fromPosition < toPosition) {
             for (int i = fromPosition; i < toPosition; i++) {
-                if (stayInSection && list.get(i+1).isHeader)
+                if (stayInSection && list.get(i+1).isHeader())
                     return false;
 
                 Collections.swap(list, i, i + 1);
@@ -254,7 +254,7 @@ public class ModularAdapter<VH extends ViewHolder, I extends ModularItem> extend
         }
         else {
             for (int i = fromPosition; i > toPosition; i--) {
-                if (stayInSection && list.get(i-1).isHeader)
+                if (stayInSection && list.get(i-1).isHeader())
                     return false;
 
                 Collections.swap(list, i, i - 1);
@@ -280,8 +280,8 @@ public class ModularAdapter<VH extends ViewHolder, I extends ModularItem> extend
         pendingRemovalPosition = position;
         pendingRemovalSwipeDir = swipeDir;
 
-        if (position != 0 && list.get(position - 1).isHeader &&
-                (position == list.size() - 1 || list.get(position + 1).isHeader)) {
+        if (position != 0 && list.get(position - 1).isHeader() &&
+                (position == list.size() - 1 || list.get(position + 1).isHeader())) {
             pendingRemovalHeader = list.get(position - 1);
             list.remove(position);
             list.remove(position - 1);

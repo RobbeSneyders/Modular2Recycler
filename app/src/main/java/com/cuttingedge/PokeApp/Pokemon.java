@@ -9,9 +9,14 @@ import com.cuttingedge.adapter2recycler.ModularItem;
  *
  * Pokemon item for use with ModularAdapter
  */
-public class Pokemon extends ModularItem {
+public class Pokemon implements ModularItem {
     public int id;
     public String name;
     public String type = "";
     public Drawable icon;
+
+    @Override
+    public boolean isHeader() {
+        return false;
+    }
 }

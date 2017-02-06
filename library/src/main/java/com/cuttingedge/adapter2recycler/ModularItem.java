@@ -5,12 +5,12 @@ package com.cuttingedge.adapter2recycler;
  *
  * Item to extend for use of this adapter.
  */
-public abstract class ModularItem {
+public interface ModularItem {
 
     /**
      * Set to true if item should be handled as Header.
      * Is automatically removed when all subitems are removed.
      */
-    public boolean isHeader;
+    boolean isHeader();
 
 }

@@ -37,13 +37,16 @@ Now that we understand the architecture of the library, let's take a look at wha
 
 ## Level 1
 
-Let's say we want to show the images and names of some pokemon in our `RecyclerView`. The only things we need, are a *Pokemon* class extending __ModularItem__ and a *PokemonModule* extending __AdapterModule__.
+Let's say we want to show the images and names of some pokemon in our `RecyclerView`. The only things we need, are a *Pokemon* class implementing __ModularItem__ and a *PokemonModule* extending __AdapterModule__.
 
 ```
-public class Pokemon extends ModularItem {
+public class Pokemon implements ModularItem {
     public String name;
     public Drawable icon;
 
+    public boolean isHeader() {
+        return false;
+    }
 }
 
 public class PokemonModule extends AdapterModule<PokemonViewHolder, Pokemon> {
@@ -93,16 +96,19 @@ And voila, your `RecyclerView` is showing the names and images of your pokemon.
 
 <img src="art/List_pokemon.png" alt="List of pokemon" width="250">  
 
-But now it's just a long list of pokemon. A clear overview is missing. So lets fix that by adding in some headers. Again, let's create a *Header* class extending __ModularItem__ and a *HeaderModule* extending __AdapterModule__. Now just set the *isHeader* field of __ModularItem__ to true in the *Header* class to make the *adapter* recognize it as a header.
+But now it's just a long list of pokemon. A clear overview is missing. So lets fix that by adding in some headers. Again, let's create a *Header* class implementing __ModularItem__ and a *HeaderModule* extending __AdapterModule__. Now just return true in the *isHeader()* method of __ModularItem__ in the *Header* class to make the *adapter* recognize it as a header.
 
 ```
-public class Header extends ModularItem {
+public class Header implements ModularItem {
     String name;
 
     public Header(String name) {
         this.name = name;
-        // set isHeader = true to make ModularAdapter recognize this as a header class.
-        isHeader = true;
+    }
+    
+    public boolean isHeader() {
+        // return true to make ModularAdapter recognize this as a header class.
+        return true;
     }
 }
 
@@ -152,7 +158,7 @@ We now have a list of pokemon, divided by headers.
 
 <img src="art/List_pokemon_headers.png" alt="List of pokemon, subdivided by headers" width="250">  
 
-If you want to add some more *viewtypes*, just do the same again over and over. Want to add some digimon to spice it up? Create a *Digimon* class extending __ModularItem__ and a *DigimonModule* extending __AdapterModule__ and add it to the adapter.
+If you want to add some more *viewtypes*, just do the same again over and over. Want to add some digimon to spice it up? Create a *Digimon* class implementing __ModularItem__ and a *DigimonModule* extending __AdapterModule__ and add it to the adapter.
 
 This code clearly shows that the modularity introduced at the first level makes for easy adding of new *viewtypes* and clean code.
 

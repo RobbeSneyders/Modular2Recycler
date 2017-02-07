@@ -39,7 +39,7 @@ This libary can be added to your project by using [JitPack](https://jitpack.io/)
 
 Add Jitpack in your root build.gradle at the end of repositories:
 
-```
+```groovy
 allprojects {
     repositories {
         ...
@@ -50,9 +50,9 @@ allprojects {
 
 Add this library as dependency to your project:
 
-```
+```groovy
 dependencies {
-        compile 'com.github.RobbeSneyders:Modular2Recycler:v1.0'
+        compile 'com.github.RobbeSneyders:Modular2Recycler:v1.0.1'
 }
 ```
 
@@ -62,17 +62,19 @@ This library does a lot of the necessary work for you. Just follow these steps:
 *Example based on available example app.*
 
 __1.__ For each ViewType  
-- Create an item by extending __ModularItem__
+- Create an item by implementing __ModularItem__
 - Create a module by extending __AdapterModule__
 
 *Pokemon & PokemonModule*
 
-```
-public class Pokemon extends ModularItem {
-    public int id;
+```java
+public class Pokemon implements ModularItem {
     public String name;
-    public String type = "";
     public Drawable icon;
+    
+    public boolean isHeader() {
+        return false;
+    }
 }
 
 class PokemonModule extends AdapterModule<PokemonViewHolder, Pokemon> {
@@ -108,14 +110,17 @@ class PokemonModule extends AdapterModule<PokemonViewHolder, Pokemon> {
 
 *Header & HeaderModule*
 
-```
-public class Header extends ModularItem {
+```java
+public class Header implements ModularItem {
     String name;
 
     public Header(String name) {
         this.name = name;
-        // set isHeader = true to make ModularAdapter recognize this as a header class.
-        isHeader = true;
+    }
+    
+    public boolean isHeader() {
+        // return true to make ModularAdapter recognize this as a header class.
+        return true;
     }
 }
 
@@ -150,7 +155,7 @@ class HeaderModule extends AdapterModule<HeaderModule.HeaderViewHolder, Header> 
 
 __2.__ Add the desired functionality to your module by implementing the corresponding __plugins__.
 
-```
+```java
 public class PokemonModule extends AdapterModule<PokemonViewHolder, Pokemon>
     implements ItemClickPlugin, ItemLongClickPlugin {
 
@@ -173,7 +178,7 @@ __4.__ Create an instance of the ModularAdapter in your `Activity`
 
 *There is no need to extend the ModularAdapter class!*
 
-```
+```java
 List<Pokemon> pokemonList = Pokedex.getAllPokemonAlphabetic();
 List<ModularItem> list = addHeaders(pokemonList);
 
@@ -185,7 +190,7 @@ adapter = new ModularAdapterBuilder<>(recyclerView, list)
 
 __5.__ Create an instance of the __AdapterModules__ you want to add and pass in the created instance of __ModularAdapter__
 
-```
+```java
 new PokemonModule(adapter);
 new HeaderModule(adapter);
 ```

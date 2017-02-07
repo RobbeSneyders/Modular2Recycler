@@ -20,7 +20,7 @@ import com.cuttingedge.adapter2recycler.Modules.SwipePlugin;
  */
 public abstract class PokemonModule<VH extends PokemonModule.PokemonViewHolder, P extends Pokemon>
         extends AdapterModule<PokemonModule.PokemonViewHolder, Pokemon>
-        implements SwipePlugin<Pokemon>, DragAndDropPlugin {
+        implements SwipePlugin<Pokemon>, DragAndDropPlugin<Pokemon> {
 
 
     /*************************

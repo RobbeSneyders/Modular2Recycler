@@ -11,6 +11,8 @@ import com.cuttingedge.PokeApp.PokemonModule;
 import com.cuttingedge.PokeApp.R;
 import com.cuttingedge.adapter2recycler.Adapter.ModularAdapter;
 
+import java.util.List;
+
 /**
  * Created by Robbe Sneyders
  *
@@ -64,5 +66,11 @@ class PokemonBillsPCModule extends PokemonModule<PokemonModule.PokemonViewHolder
     @Override
     public int getDragDirs() {
         return ItemTouchHelper.UP | ItemTouchHelper.DOWN | ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT;
+    }
+
+    @Override
+    public void onMoved(Pokemon pokemon, List adapterList) {
+        // Do nothing
+        // The way Pokedex class works should be changed to be able to handle moved pokemon
     }
 }

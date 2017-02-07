@@ -15,6 +15,8 @@ import com.cuttingedge.adapter2recycler.Adapter.ModularAdapter;
 import com.cuttingedge.adapter2recycler.Modules.ItemClickPlugin;
 import com.cuttingedge.adapter2recycler.Modules.ItemLongClickPlugin;
 
+import java.util.List;
+
 /**
  * Created by Robbe Sneyders
  *
@@ -99,5 +101,11 @@ class PokemonBackPackModule extends PokemonModule<PokemonModule.PokemonViewHolde
     @Override
     public int getDragDirs() {
         return ItemTouchHelper.UP | ItemTouchHelper.DOWN;
+    }
+
+    @Override
+    public void onMoved(Pokemon movedPokemon, List adapterList) {
+        // Do nothing
+        // The way Pokedex class works should be changed to be able to handle moved pokemon
     }
 }

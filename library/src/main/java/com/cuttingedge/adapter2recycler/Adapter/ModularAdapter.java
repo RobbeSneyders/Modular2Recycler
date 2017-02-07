@@ -241,8 +241,8 @@ public class ModularAdapter<VH extends ViewHolder, I extends ModularItem> extend
     @Override
     protected boolean onDrag(int fromPosition, int toPosition) {
         AdapterModule<VH, I> module = adapterModuleManager.getAdapterModule(getItemViewType(fromPosition));
-        DragAndDropPlugin dragNdrop = (DragAndDropPlugin) module;
-        boolean stayInSection = dragNdrop.keepDragInSection();
+        DragAndDropPlugin dragModule = (DragAndDropPlugin) module;
+        boolean stayInSection = dragModule.keepDragInSection();
 
         if (fromPosition < toPosition) {
             for (int i = fromPosition; i < toPosition; i++) {
@@ -261,6 +261,7 @@ public class ModularAdapter<VH extends ViewHolder, I extends ModularItem> extend
             }
         }
         notifyItemMoved(fromPosition, toPosition);
+        dragModule.onMoved(list.get(toPosition), list);
         return true;
     }
 

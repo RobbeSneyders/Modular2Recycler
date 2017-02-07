@@ -80,8 +80,11 @@ public abstract class AdapterModule<VH extends ViewHolder, I extends ModularItem
      * @return used subclass of ModularItem.
      */
     public Class returnedClass() {
-        ParameterizedType parameterizedType = (ParameterizedType)getClass()
-                .getGenericSuperclass();
+        Class c = getClass();
+        while (!(c.getGenericSuperclass() instanceof ParameterizedType))
+            c = c.getSuperclass();
+
+        ParameterizedType parameterizedType = (ParameterizedType)c.getGenericSuperclass();
         return (Class) parameterizedType.getActualTypeArguments()[1];
     }
 }

@@ -18,7 +18,7 @@ import com.cuttingedge.adapter2recycler.Modules.SwipePlugin;
  *
  * Module to handle behaviour of Pokemon item in the example app
  */
-public abstract class PokemonModule<VH extends PokemonModule.PokemonViewHolder, P extends Pokemon>
+public abstract class PokemonModule
         extends AdapterModule<PokemonModule.PokemonViewHolder, Pokemon>
         implements SwipePlugin<Pokemon>, DragAndDropPlugin<Pokemon> {
 

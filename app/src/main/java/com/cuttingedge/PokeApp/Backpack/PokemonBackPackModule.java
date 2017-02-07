@@ -22,7 +22,7 @@ import java.util.List;
  *
  * Module to handle the behaviour of the Pokemon item in the backpack context
  */
-class PokemonBackPackModule extends PokemonModule<PokemonModule.PokemonViewHolder, Pokemon>
+class PokemonBackPackModule extends PokemonModule
         implements ItemClickPlugin<Pokemon>, ItemLongClickPlugin<Pokemon> {
 
     private Context context;

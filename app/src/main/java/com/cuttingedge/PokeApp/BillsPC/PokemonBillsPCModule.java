@@ -18,7 +18,7 @@ import java.util.List;
  *
  * Module to handle behaviour of Pokemon item in Bills PC context
  */
-class PokemonBillsPCModule extends PokemonModule<PokemonModule.PokemonViewHolder, Pokemon> {
+class PokemonBillsPCModule extends PokemonModule{
 
     /*************************
      * AdapterModule methods *

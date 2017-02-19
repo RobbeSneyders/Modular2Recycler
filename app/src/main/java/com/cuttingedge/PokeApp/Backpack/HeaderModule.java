@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.cuttingedge.PokeApp.R;
-import com.cuttingedge.adapter2recycler.Adapter.ModularAdapter;
 import com.cuttingedge.adapter2recycler.Modules.AdapterModule;
 
 /**
@@ -17,10 +16,6 @@ import com.cuttingedge.adapter2recycler.Modules.AdapterModule;
  */
 
 class HeaderModule extends AdapterModule<HeaderModule.HeaderViewHolder, Header> {
-
-    HeaderModule(ModularAdapter adapter) {
-        super(adapter);
-    }
 
     @Override
     public HeaderViewHolder onCreateViewHolder(ViewGroup parent) {

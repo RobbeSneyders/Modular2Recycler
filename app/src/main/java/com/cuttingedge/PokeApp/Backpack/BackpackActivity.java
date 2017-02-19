@@ -66,8 +66,8 @@ public class BackpackActivity extends BaseActivity {
                 .setSwipeRight(Color.GREEN, ResourcesCompat.getDrawable(getResources(), R.drawable.ic_cloud_upload_white_24dp, null))
                 .build();
 
-        new PokemonBackPackModule(this, adapter);
-        new HeaderModule(adapter);
+        new PokemonBackPackModule(this).bindToAdapter(adapter);
+        new HeaderModule().bindToAdapter(adapter);
     }
 
 

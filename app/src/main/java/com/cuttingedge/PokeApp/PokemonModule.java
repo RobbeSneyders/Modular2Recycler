@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.cuttingedge.adapter2recycler.Adapter.ModularAdapter;
 import com.cuttingedge.adapter2recycler.Modules.AdapterModule;
 import com.cuttingedge.adapter2recycler.Modules.DragAndDropPlugin;
 import com.cuttingedge.adapter2recycler.Modules.SwipePlugin;
@@ -26,10 +25,6 @@ public abstract class PokemonModule
     /*************************
      * AdapterModule methods *
      *************************/
-
-    public PokemonModule(ModularAdapter adapter) {
-        super(adapter);
-    }
 
     @Override
     public PokemonViewHolder onCreateViewHolder(ViewGroup parent) {

@@ -9,7 +9,6 @@ import com.cuttingedge.PokeApp.Pokedex;
 import com.cuttingedge.PokeApp.Pokemon;
 import com.cuttingedge.PokeApp.PokemonModule;
 import com.cuttingedge.PokeApp.R;
-import com.cuttingedge.adapter2recycler.Adapter.ModularAdapter;
 
 import java.util.List;
 
@@ -23,10 +22,6 @@ class PokemonBillsPCModule extends PokemonModule{
     /*************************
      * AdapterModule methods *
      *************************/
-
-    PokemonBillsPCModule(ModularAdapter adapter) {
-        super(adapter);
-    }
 
     @Override
     public PokemonViewHolder onCreateViewHolder(ViewGroup parent) {

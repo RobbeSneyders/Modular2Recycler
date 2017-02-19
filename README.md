@@ -1,37 +1,36 @@
-# Modular²Recycler
+<img src="docs/art/Header.png" alt="Header">
 
-Modular²Recycler is a `RecyclerView.Adapter` that is modular *squared*.
+### Modular²Recycler is a `RecyclerView.Adapter` that is modular *squared*.
+
+It also adds extra features:
+- OnItem(Long)ClickListener  
+- Headers  
+- Swipe to dismiss with undo  
+- Drag and drop.
+
+<img src="docs/art/Item_click.gif" alt="Item click" width="200px">
+<img src="docs/art/Item_long_click.gif" alt="Item click" width="200px">
+<img src="docs/art/Swipe.gif" alt="Item click" width="200px">
+<img src="docs/art/Drag_drop.gif" alt="Item click" width="200px">
 
 ## Design Pattern
 
-This library uses the approach of [Modular design](https://en.wikipedia.org/wiki/Modular_design), in which a system is subdivided into modular, reusable components. It makes use of both the [composition](https://en.wikipedia.org/wiki/Object_composition) and [aggregation](https://en.wikipedia.org/wiki/Object_composition#Aggregation) pattern. A detailed explanation about the architecture of this library can be read [here](https://robbesneyders.github.io/Modular2Recycler).
+This library uses the approach of [Modular design](https://en.wikipedia.org/wiki/Modular_design), in which a system is subdivided into modular, reusable components.
+A detailed explanation about the architecture of this library can be read [here](https://robbesneyders.github.io/Modular2Recycler).
 
 The ² in Modular²Recycler denotes the modularity of the adapter on two separate levels.
 
 ### First Level
 
-Instead of creating one huge adapter to populate a `RecyclerView` with our data, we create an __AdapterModule__ for each different viewtype. The composition (or better: aggregation) of these __AdapterModules__ is handled by this library.
+Instead of creating one huge adapter to populate a `RecyclerView` with data, one __AdapterModule__ is created for each different viewtype.
 
-<img src="docs/art/Modular_level_1.png" alt="Modular level 1" width="300">  
-Figure 1: Aggregation of __AdapterModules__ into ModularAdapter.
+<img src="docs/art/Modular_level_1.png" alt="Modular level 1" width="500">
 
-### Second level
+### Second Level
 
-On the second level, these __AdapterModules__ are modular themselves. They consist of a fundament: the class __AdapterModule__, which they should inherit from. Reusable components can be added to this fundament to add certain functionalities. These reusable components are offered by this library in the form of __Plugins__ which are implemented as `Interfaces`.
+Extra funcionality can be added to these __AdapterModules__ by implementing __plugins__ provided by this library.
 
-<img src="docs/art/Modular_level_2.png" alt="Modular level 2" width="250">  
-Figure 2: Composition of __Plugins__ into __AdapterModule__.
-
-#### Available plugins
-
-The plugins offered by this library at the moment are:
-- OnItemClick
-- OnItemLongClick
-- Headers
-- Swipe to remove/archive/any action
-    - Undo
-- Drag and drop
-    - Stay within section
+<img src="docs/art/Modular_level_2.png" alt="Modular level 2" width="300">
 
 ## Dependencies
 
@@ -61,7 +60,9 @@ dependencies {
 This library does a lot of the necessary work for you. Just follow these steps:  
 *Example based on available example app.*
 
-__1.__ For each ViewType  
+
+
+#### 1. For each ViewType  
 - Create an item by implementing __ModularItem__
 - Create a module by extending __AdapterModule__
 
@@ -78,10 +79,6 @@ public class Pokemon implements ModularItem {
 }
 
 class PokemonModule extends AdapterModule<PokemonViewHolder, Pokemon> {
-
-    public PokemonModule(ModularAdapter adapter) {
-        super(adapter);
-    }
 
     @Override
     public PokemonViewHolder onCreateViewHolder(ViewGroup parent) {
@@ -126,10 +123,6 @@ public class Header implements ModularItem {
 
 class HeaderModule extends AdapterModule<HeaderModule.HeaderViewHolder, Header> {
 
-    HeaderModule(ModularAdapter adapter) {
-        super(adapter);
-    }
-
     @Override
     public HeaderViewHolder onCreateViewHolder(ViewGroup parent) {
         View headerView = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_header, parent, false);
@@ -153,7 +146,7 @@ class HeaderModule extends AdapterModule<HeaderModule.HeaderViewHolder, Header> 
 
 ```
 
-__2.__ Add the desired functionality to your module by implementing the corresponding __plugins__.
+#### 2. Add the desired functionality to your module by implementing the corresponding __plugins__.
 
 ```java
 public class PokemonModule extends AdapterModule<PokemonViewHolder, Pokemon>
@@ -174,9 +167,9 @@ public class PokemonModule extends AdapterModule<PokemonViewHolder, Pokemon>
     }
 ```
 
-__4.__ Create an instance of the ModularAdapter in your `Activity`
+#### 3. Create an instance of the ModularAdapter in your `Activity`
 
-*There is no need to extend the ModularAdapter class!*
+*There is no need to extend the ModularAdapter class unless you want to add extra functionality.*
 
 ```java
 List<Pokemon> pokemonList = Pokedex.getAllPokemonAlphabetic();
@@ -188,18 +181,18 @@ adapter = new ModularAdapterBuilder<>(recyclerView, list)
         .build();
 ```
 
-__5.__ Create an instance of the __AdapterModules__ you want to add and pass in the created instance of __ModularAdapter__
+#### 4. Create an instance of the __AdapterModules__ you want to add and bind them to the created instance of __ModularAdapter__
 
 ```java
-new PokemonModule(adapter);
-new HeaderModule(adapter);
+new PokemonModule().bindToAdapter(adapter);
+new HeaderModule().bindToAdapter(adapter);
 ```
 
 ## Example App
 
 PokéApp is an example app to demonstrate the use of this library.  
-- [Code](app)  
-- [Available on Play Store](https://play.google.com/store/apps/details?id=com.cuttingedge.pokeApp).
+- [Source code](app)  
+- [Available on Play Store](https://play.google.com/store/apps/details?id=com.cuttingedge.pokeapp).
 
 [![UndoRecycler](http://i.imgur.com/jFQTroq.gif)](http://imgur.com/jFQTroq) [![UndoRecyclerAlphabetic](http://i.imgur.com/5bgXPR2.gif)](http://imgur.com/5bgXPR2)
 

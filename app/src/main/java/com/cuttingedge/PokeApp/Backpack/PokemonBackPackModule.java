@@ -11,7 +11,6 @@ import com.cuttingedge.PokeApp.Pokedex;
 import com.cuttingedge.PokeApp.Pokemon;
 import com.cuttingedge.PokeApp.PokemonModule;
 import com.cuttingedge.PokeApp.R;
-import com.cuttingedge.adapter2recycler.Adapter.ModularAdapter;
 import com.cuttingedge.adapter2recycler.Modules.ItemClickPlugin;
 import com.cuttingedge.adapter2recycler.Modules.ItemLongClickPlugin;
 
@@ -32,8 +31,7 @@ class PokemonBackPackModule extends PokemonModule
      * AdapterModule methods *
      *************************/
 
-    PokemonBackPackModule(Context context, ModularAdapter adapter) {
-        super(adapter);
+    PokemonBackPackModule(Context context) {
         this.context = context;
     }
 

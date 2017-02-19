@@ -16,13 +16,12 @@ import java.lang.reflect.ParameterizedType;
 @SuppressWarnings("unused")
 public abstract class AdapterModule<VH extends ViewHolder, I extends ModularItem> {
 
-
     /**
-     * Construct module and add itself to manager via adapter.
+     * Binds the module to the manager via adapter.
      *
-     * @param adapter ModularAdapter for which this module is meant to be used
+     * @param adapter ModularAdapter for which this module is meant to be used.
      */
-    public AdapterModule(ModularAdapter adapter) {
+    public void bindToAdapter(ModularAdapter adapter) {
         adapter.addAdapterModule(this);
     }
 

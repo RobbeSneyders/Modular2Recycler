@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.res.ResourcesCompat;
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.ViewHolder;
@@ -86,9 +87,11 @@ public class BackpackActivity extends BaseActivity {
             isAlphabetic = true;
         }
 
-        List<ModularItem> list = addHeaders(pokemonList);
-        // swaps the data of the adapter
-        adapter.swap(list);
+        List<ModularItem> newList = addHeaders(pokemonList);
+        List<ModularItem> oldList = adapter.getList();
+        DiffUtil.DiffResult result = DiffUtil.calculateDiff(new DiffCallback(oldList, newList));
+        adapter.swap(newList, false);
+        result.dispatchUpdatesTo(adapter);
     }
 
 

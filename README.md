@@ -51,7 +51,7 @@ Add this library as dependency to your project:
 
 ```groovy
 dependencies {
-        compile 'com.github.RobbeSneyders:Modular2Recycler:v1.0.1'
+        compile 'com.github.RobbeSneyders:Modular2Recycler:v1.0.2'
 }
 ```
 

@@ -103,9 +103,21 @@ public class ModularAdapter<VH extends ViewHolder, I extends ModularItem> extend
 
     /**
      * Swap whole list at once
+     *
      * @param newList new list
      */
     public void swap(List<I> newList){
+        swap(newList, true);
+    }
+
+    /**
+     * Swap whole list at once
+     *
+     * @param newList new list
+     * @param notify true if method should notify adapter of changes, false otherwise (for example
+     *               when using DiffUtils)
+     */
+    public void swap(List<I> newList, boolean notify){
         if (list != null) {
             list.clear();
             list.addAll(newList);
@@ -113,7 +125,8 @@ public class ModularAdapter<VH extends ViewHolder, I extends ModularItem> extend
         else {
             list = newList;
         }
-        notifyDataSetChanged();
+        if (notify)
+            notifyDataSetChanged();
     }
 
 

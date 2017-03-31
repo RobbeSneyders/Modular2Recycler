@@ -7,6 +7,9 @@ import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 
+import java.util.Collections;
+import java.util.List;
+
 import com.cuttingedge.adapter2recycler.Helpers.AdapterModuleManager;
 import com.cuttingedge.adapter2recycler.ModularItem;
 import com.cuttingedge.adapter2recycler.Modules.AdapterModule;
@@ -14,9 +17,6 @@ import com.cuttingedge.adapter2recycler.Modules.DragAndDropPlugin;
 import com.cuttingedge.adapter2recycler.Modules.ItemClickPlugin;
 import com.cuttingedge.adapter2recycler.Modules.ItemLongClickPlugin;
 import com.cuttingedge.adapter2recycler.Modules.SwipePlugin;
-
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Created by Robbe Sneyders
@@ -381,7 +381,7 @@ public class ModularAdapter<VH extends ViewHolder, I extends ModularItem> extend
         public boolean onLongClick(View v) {
             ViewHolder viewHolder = recyclerView.getChildViewHolder(v);
             AdapterModule module = adapterModuleManager.getAdapterModule(viewHolder.getItemViewType());
-            return module instanceof ItemClickPlugin &&
+            return module instanceof ItemLongClickPlugin &&
                     ((ItemLongClickPlugin<I>) module).onItemLongClicked(list.get(viewHolder.getAdapterPosition()));
         }
     };

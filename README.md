@@ -8,10 +8,7 @@ It also adds extra features:
 - Swipe to dismiss with undo  
 - Drag and drop.
 
-<img src="docs/art/Item_click.gif" alt="Item click" width="200px">
-<img src="docs/art/Item_long_click.gif" alt="Item click" width="200px">
-<img src="docs/art/Swipe.gif" alt="Item click" width="200px">
-<img src="docs/art/Drag_drop.gif" alt="Item click" width="200px">
+<img src="docs/art/Item_click.gif" alt="Item click" width="200px"><img src="docs/art/Item_long_click.gif" alt="Item click" width="200px"><img src="docs/art/Swipe.gif" alt="Item click" width="200px"><img src="docs/art/Drag_drop.gif" alt="Item click" width="200px">
 
 ## Design Pattern
 

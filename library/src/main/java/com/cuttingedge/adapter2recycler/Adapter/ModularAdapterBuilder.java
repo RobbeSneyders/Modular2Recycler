@@ -6,9 +6,9 @@ import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 
-import com.cuttingedge.adapter2recycler.ModularItem;
-
 import java.util.List;
+
+import com.cuttingedge.adapter2recycler.ModularItem;
 
 /**
  * Created by Robbe Sneyders

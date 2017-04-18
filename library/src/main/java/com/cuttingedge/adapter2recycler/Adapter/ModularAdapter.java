@@ -42,7 +42,7 @@ public class ModularAdapter<VH extends ViewHolder, I extends ModularItem> extend
      *
      * @param builder builder used to construct this adapter.
      */
-    ModularAdapter(ModularAdapterBuilder<I> builder) {
+    public ModularAdapter(ModularAdapterBuilder<I> builder) {
         super(builder.recyclerView);
         this.list = builder.list;
 

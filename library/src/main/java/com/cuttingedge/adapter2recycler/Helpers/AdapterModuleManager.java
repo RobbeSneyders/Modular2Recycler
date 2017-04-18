@@ -2,11 +2,11 @@ package com.cuttingedge.adapter2recycler.Helpers;
 
 import android.support.v7.widget.RecyclerView.ViewHolder;
 
-import com.cuttingedge.adapter2recycler.ModularItem;
-import com.cuttingedge.adapter2recycler.Modules.AdapterModule;
-
 import java.util.Map;
 import java.util.TreeMap;
+
+import com.cuttingedge.adapter2recycler.ModularItem;
+import com.cuttingedge.adapter2recycler.Modules.AdapterModule;
 
 /**
  * Created by Robbe Sneyders
@@ -48,7 +48,7 @@ public class AdapterModuleManager<M extends AdapterModule<VH, I>, VH extends Vie
      */
     public int getViewType(I item) {
         for (M value : types.values()) {
-            if (value.returnedClass().isInstance(item)) {
+            if (value.returnedClass().equals(item.getClass())) {
                 return getKeyByValue(types, value);
             }
         }

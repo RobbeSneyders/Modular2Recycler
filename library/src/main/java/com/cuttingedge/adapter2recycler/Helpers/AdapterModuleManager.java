@@ -47,8 +47,15 @@ public class AdapterModuleManager<M extends AdapterModule<VH, I>, VH extends Vie
      * Get ViewType corresponding to item.
      */
     public int getViewType(I item) {
+        // Firstly try to find exact match
         for (M value : types.values()) {
             if (value.returnedClass().equals(item.getClass())) {
+                return getKeyByValue(types, value);
+            }
+        }
+        // If not found - try instanceof match
+        for (M value : types.values()) {
+            if (value.returnedClass().isInstance(item)) {
                 return getKeyByValue(types, value);
             }
         }

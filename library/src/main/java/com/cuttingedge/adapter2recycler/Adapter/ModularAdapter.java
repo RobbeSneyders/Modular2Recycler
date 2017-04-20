@@ -366,8 +366,11 @@ public class ModularAdapter<VH extends ViewHolder, I extends ModularItem> extend
         public void onClick(View v) {
             ViewHolder viewHolder = recyclerView.getChildViewHolder(v);
             AdapterModule<VH, I> module = adapterModuleManager.getAdapterModule(viewHolder.getItemViewType());
+			int adapterPos = viewHolder.getAdapterPosition();
+			if (adapterPos == -1)
+				return;
             if (module instanceof ItemClickPlugin)
-                ((ItemClickPlugin<I>) module).onItemClicked(list.get(viewHolder.getAdapterPosition()));
+                ((ItemClickPlugin<I>) module).onItemClicked(list.get(adapterPos));
         }
     };
 
@@ -381,8 +384,11 @@ public class ModularAdapter<VH extends ViewHolder, I extends ModularItem> extend
         public boolean onLongClick(View v) {
             ViewHolder viewHolder = recyclerView.getChildViewHolder(v);
             AdapterModule module = adapterModuleManager.getAdapterModule(viewHolder.getItemViewType());
+            int adapterPos = viewHolder.getAdapterPosition();
+            if (adapterPos == -1)
+                return false;
             return module instanceof ItemLongClickPlugin &&
-                    ((ItemLongClickPlugin<I>) module).onItemLongClicked(list.get(viewHolder.getAdapterPosition()));
+                    ((ItemLongClickPlugin<I>) module).onItemLongClicked(list.get(adapterPos));
         }
     };
 }

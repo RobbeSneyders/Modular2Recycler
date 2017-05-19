@@ -48,14 +48,14 @@ public class AdapterModuleManager<M extends AdapterModule<VH, I>, VH extends Vie
      */
     public int getViewType(I item) {
         // Firstly try to find exact match
-        for (M value : types.values()) {
-            if (value.returnedClass().equals(item.getClass())) {
-                return getKeyByValue(types, value);
+        for (M module : types.values()) {
+            if (module.getItemClass().equals(item.getClass())) {
+                return getKeyByValue(types, module);
             }
         }
         // If not found - try instanceof match
         for (M value : types.values()) {
-            if (value.returnedClass().isInstance(item)) {
+            if (value.getItemClass().isInstance(item)) {
                 return getKeyByValue(types, value);
             }
         }

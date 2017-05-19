@@ -3,10 +3,10 @@ package com.cuttingedge.adapter2recycler.Modules;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.ViewGroup;
 
+import java.lang.reflect.ParameterizedType;
+
 import com.cuttingedge.adapter2recycler.Adapter.ModularAdapter;
 import com.cuttingedge.adapter2recycler.ModularItem;
-
-import java.lang.reflect.ParameterizedType;
 
 /**
  * Created by Robbe Sneyders
@@ -15,6 +15,12 @@ import java.lang.reflect.ParameterizedType;
  */
 @SuppressWarnings("unused")
 public abstract class AdapterModule<VH extends ViewHolder, I extends ModularItem> {
+
+    private Class<I> itemClass;
+
+    public AdapterModule() {
+        itemClass = returnedClass();
+    }
 
     /**
      * Binds the module to the manager via adapter.
@@ -75,15 +81,20 @@ public abstract class AdapterModule<VH extends ViewHolder, I extends ModularItem
 
     /**
      * Use reflection to find used subclass of ModularItem.
+     * Attention! Call of getGenericSuperclass() is slow
      *
      * @return used subclass of ModularItem.
      */
-    public Class returnedClass() {
+    private Class<I> returnedClass() {
         Class c = getClass();
         while (!(c.getGenericSuperclass() instanceof ParameterizedType))
             c = c.getSuperclass();
 
         ParameterizedType parameterizedType = (ParameterizedType)c.getGenericSuperclass();
-        return (Class) parameterizedType.getActualTypeArguments()[1];
+        return (Class<I>) parameterizedType.getActualTypeArguments()[1];
+    }
+
+    public Class<I> getItemClass() {
+        return itemClass;
     }
 }

@@ -114,9 +114,12 @@ abstract class AnimatedAdapter<VH extends ViewHolder> extends Adapter<VH> {
          */
         @Override
         public int getMovementFlags(RecyclerView recyclerView, ViewHolder viewHolder) {
-            int dragFlags = AnimatedAdapter.this.getDragDirs(viewHolder.getAdapterPosition());
-            int swipeFlags = getItemSwipeDirs(viewHolder.getAdapterPosition());
-            return makeMovementFlags(dragFlags, swipeFlags);
+            int position = viewHolder.getAdapterPosition();
+            if (position == RecyclerView.NO_POSITION) {
+                return super.getMovementFlags(recyclerView, viewHolder);
+            } else {
+                return makeMovementFlags(AnimatedAdapter.this.getDragDirs(position), getItemSwipeDirs(position));
+            }
         }
 
 

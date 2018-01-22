@@ -11,12 +11,11 @@ import com.cuttingedge.adapter2recycler.ModularItem;
 
 /**
  * Created by Robbe Sneyders
- *
+ * <p>
  * This module should be extended for every different item to be shown in the recyclerview
  */
 @SuppressWarnings("unused")
 public abstract class AdapterModule<VH extends ViewHolder, I extends ModularItem> {
-
     private Class<I> itemClass;
 
     public AdapterModule() {
@@ -104,6 +103,11 @@ public abstract class AdapterModule<VH extends ViewHolder, I extends ModularItem
         Class c = getClass();
         while (!(c.getGenericSuperclass() instanceof ParameterizedType))
             c = c.getSuperclass();
+
+        // Module can have its own parameters
+        if (c.getTypeParameters().length > 0) {
+            return (Class<I>) c.getTypeParameters()[1].getBounds()[0];
+        }
 
         ParameterizedType parameterizedType = (ParameterizedType)c.getGenericSuperclass();
         return (Class<I>) parameterizedType.getActualTypeArguments()[1];

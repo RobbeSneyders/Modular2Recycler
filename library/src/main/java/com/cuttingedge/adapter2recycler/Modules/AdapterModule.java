@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.ViewGroup;
 
 import java.lang.reflect.ParameterizedType;
+import java.util.List;
 
 import com.cuttingedge.adapter2recycler.Adapter.ModularAdapter;
 import com.cuttingedge.adapter2recycler.ModularItem;
@@ -53,6 +54,20 @@ public abstract class AdapterModule<VH extends ViewHolder, I extends ModularItem
      * @param item item to get contents from.
      */
     public abstract void onBindViewHolder(VH viewHolder, I item);
+
+
+    /**
+     * Called by RecyclerView to display the data at the specified position. This method
+     * should update the contents of the {@link ViewHolder#itemView} to reflect the item at
+     * the given position.
+     *
+     * @param viewHolder The ViewHolder which should be updated to represent the contents of the item.
+     * @param item item to get contents from.
+     * @param payloads A non-null list of merged payloads. Can be empty list if requires full update.
+     */
+    public void onBindViewHolder(VH viewHolder, I item, List<Object> payloads) {
+        onBindViewHolder(viewHolder, item);
+    }
 
 
     /**

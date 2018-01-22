@@ -159,6 +159,19 @@ public class ModularAdapter<VH extends ViewHolder, I extends ModularItem> extend
 
 
     /**
+     * Forward onBindViewHolder to the appropriate AdapterModule.
+     */
+    @Override
+    public void onBindViewHolder(VH viewHolder, int position, List<Object> payloads) {
+        if (payloads == null || payloads.isEmpty()) {
+            onBindViewHolder(viewHolder, position);
+        } else {
+            adapterModuleManager.getAdapterModule(viewHolder.getItemViewType()).onBindViewHolder(viewHolder, list.get(position), payloads);
+        }
+    }
+
+
+    /**
      * Set On(Long)ClickListener on ViewHolder.itemView when ViewHolder gets attached.
      * Forward onViewAttachedToWindow to the appropriate AdapterModule.
      */

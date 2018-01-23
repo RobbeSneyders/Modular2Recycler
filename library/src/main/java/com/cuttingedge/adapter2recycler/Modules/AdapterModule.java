@@ -19,7 +19,7 @@ public abstract class AdapterModule<VH extends ViewHolder, I extends ModularItem
     private Class<I> itemClass;
 
     public AdapterModule() {
-        itemClass = returnedClass();
+        itemClass = returnedItemClass();
     }
 
     /**
@@ -93,25 +93,21 @@ public abstract class AdapterModule<VH extends ViewHolder, I extends ModularItem
     public void onViewRecycled(VH viewHolder) {}
 
 
-    /**
-     * Use reflection to find used subclass of ModularItem.
-     * Attention! Call of getGenericSuperclass() is slow
-     *
-     * @return used subclass of ModularItem.
-     */
-    private Class<I> returnedClass() {
-        Class c = getClass();
-        while (!(c.getGenericSuperclass() instanceof ParameterizedType))
-            c = c.getSuperclass();
+	/**
+	 * Use reflection to find used subclass of ModularItem. Called once in constructor.
+	 * Override and return item class directly if you are using parametrized Modules with inheritance, for example ChildModule<VH extends ParentModule.VH, I extends ChildModule.Item> extends ParentModule<VH, I>
+	 *
+	 * @return used subclass of ModularItem.
+	 */
+	protected Class<I> returnedItemClass() {
+		Class c = getClass();
+		while (!(c.getGenericSuperclass() instanceof ParameterizedType)) {
+			c = c.getSuperclass();
+		}
 
-        // Module can have its own parameters
-        if (c.getTypeParameters().length > 0) {
-            return (Class<I>) c.getTypeParameters()[1].getBounds()[0];
-        }
-
-        ParameterizedType parameterizedType = (ParameterizedType)c.getGenericSuperclass();
-        return (Class<I>) parameterizedType.getActualTypeArguments()[1];
-    }
+		ParameterizedType parameterizedType = (ParameterizedType) c.getGenericSuperclass();
+		return (Class<I>) parameterizedType.getActualTypeArguments()[1];
+	}
 
     public Class<I> getItemClass() {
         return itemClass;

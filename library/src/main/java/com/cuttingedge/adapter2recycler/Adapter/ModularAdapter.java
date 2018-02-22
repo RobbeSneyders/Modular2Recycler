@@ -1,14 +1,12 @@
 package com.cuttingedge.adapter2recycler.Adapter;
 
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
-
-import java.util.Collections;
-import java.util.List;
 
 import com.cuttingedge.adapter2recycler.Helpers.AdapterModuleManager;
 import com.cuttingedge.adapter2recycler.ModularItem;
@@ -18,14 +16,18 @@ import com.cuttingedge.adapter2recycler.Modules.ItemClickPlugin;
 import com.cuttingedge.adapter2recycler.Modules.ItemLongClickPlugin;
 import com.cuttingedge.adapter2recycler.Modules.SwipePlugin;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Created by Robbe Sneyders
- *
+ * <p>
  * Adapter with all modular logic.
  */
 @SuppressWarnings("unused")
-public class ModularAdapter<VH extends ViewHolder, I extends ModularItem> extends AnimatedAdapter<VH> {
+public class ModularAdapter<VH extends ViewHolder, I extends ModularItem>  extends AnimatedAdapter<VH> {
 
+    private final RecyclerView recyclerView;
     private List<I> list;
 
     // Last removed item saved so removal can be undone
@@ -34,7 +36,7 @@ public class ModularAdapter<VH extends ViewHolder, I extends ModularItem> extend
     private int pendingRemovalPosition;
     private int pendingRemovalSwipeDir;
 
-    private AdapterModuleManager<AdapterModule<VH , I>, VH, I> adapterModuleManager;
+    private AdapterModuleManager<AdapterModule<VH, I>, VH, I> adapterModuleManager;
 
 
     /**
@@ -43,19 +45,14 @@ public class ModularAdapter<VH extends ViewHolder, I extends ModularItem> extend
      * @param builder builder used to construct this adapter.
      */
     public ModularAdapter(ModularAdapterBuilder<I> builder) {
-        super(builder.recyclerView);
+        super(builder.recyclerView, builder.touchHelperCallback);
+        this.recyclerView = builder.recyclerView;
         this.list = builder.list;
-
-        this.rightBackground = builder.rightBackground;
-        this.rightMark = builder.rightMark;
-        this.leftBackground = builder.leftBackground;
-        this.leftMark = builder.leftMark;
 
         adapterModuleManager = new AdapterModuleManager<>();
 
-        recyclerView.setAdapter(this);
+        builder.recyclerView.setAdapter(this);
     }
-
 
     /**
      * Get list in current state
@@ -63,7 +60,6 @@ public class ModularAdapter<VH extends ViewHolder, I extends ModularItem> extend
     public List<I> getList() {
         return list;
     }
-
 
     /**
      * Methods for adding and removing single items
@@ -83,7 +79,6 @@ public class ModularAdapter<VH extends ViewHolder, I extends ModularItem> extend
     public void removeItem(int index) {
         list.remove(index);
     }
-
 
     /**
      * Methods for adding and removing multiple items
@@ -106,7 +101,7 @@ public class ModularAdapter<VH extends ViewHolder, I extends ModularItem> extend
      *
      * @param newList new list
      */
-    public void swap(List<I> newList){
+    public void swap(List<I> newList) {
         swap(newList, true);
     }
 
@@ -114,15 +109,14 @@ public class ModularAdapter<VH extends ViewHolder, I extends ModularItem> extend
      * Swap whole list at once
      *
      * @param newList new list
-     * @param notify true if method should notify adapter of changes, false otherwise (for example
-     *               when using DiffUtils)
+     * @param notify  true if method should notify adapter of changes, false otherwise (for example
+     *                when using DiffUtils)
      */
-    public void swap(List<I> newList, boolean notify){
+    public void swap(List<I> newList, boolean notify) {
         if (list != null) {
             list.clear();
             list.addAll(newList);
-        }
-        else {
+        } else {
             list = newList;
         }
         if (notify)
@@ -261,7 +255,7 @@ public class ModularAdapter<VH extends ViewHolder, I extends ModularItem> extend
      * Called while view is being dragged.
      *
      * @param fromPosition current position of viewHolder in adapter.
-     * @param toPosition position of viewHolder which place will be taken.
+     * @param toPosition   position of viewHolder which place will be taken.
      * @return true if swapped.
      */
     @Override
@@ -272,15 +266,14 @@ public class ModularAdapter<VH extends ViewHolder, I extends ModularItem> extend
 
         if (fromPosition < toPosition) {
             for (int i = fromPosition; i < toPosition; i++) {
-                if (stayInSection && list.get(i+1).isHeader())
+                if (stayInSection && list.get(i + 1).isHeader())
                     return false;
 
                 Collections.swap(list, i, i + 1);
             }
-        }
-        else {
+        } else {
             for (int i = fromPosition; i > toPosition; i--) {
-                if (stayInSection && list.get(i-1).isHeader())
+                if (stayInSection && list.get(i - 1).isHeader())
                     return false;
 
                 Collections.swap(list, i, i - 1);
@@ -312,7 +305,7 @@ public class ModularAdapter<VH extends ViewHolder, I extends ModularItem> extend
             pendingRemovalHeader = list.get(position - 1);
             list.remove(position);
             list.remove(position - 1);
-            notifyItemRangeRemoved(position -1, 2);
+            notifyItemRangeRemoved(position - 1, 2);
         } else {
             pendingRemovalHeader = null;
             list.remove(position);
@@ -331,14 +324,13 @@ public class ModularAdapter<VH extends ViewHolder, I extends ModularItem> extend
      */
     @SuppressWarnings("unchecked")
     private void undo() {
-        lastWasSwiped = false;
+        //lastWasSwiped = false; todo: refactor
 
         if (pendingRemovalHeader != null) {
             list.add(pendingRemovalPosition - 1, pendingRemovalHeader);
             list.add(pendingRemovalPosition, pendingRemovalItem);
-            notifyItemRangeInserted(pendingRemovalPosition -1, 2);
-        }
-        else {
+            notifyItemRangeInserted(pendingRemovalPosition - 1, 2);
+        } else {
             list.add(pendingRemovalPosition, pendingRemovalItem);
             notifyItemInserted(pendingRemovalPosition);
         }
@@ -379,9 +371,9 @@ public class ModularAdapter<VH extends ViewHolder, I extends ModularItem> extend
         public void onClick(View v) {
             ViewHolder viewHolder = recyclerView.getChildViewHolder(v);
             AdapterModule<VH, I> module = adapterModuleManager.getAdapterModule(viewHolder.getItemViewType());
-			int adapterPos = viewHolder.getAdapterPosition();
-			if (adapterPos == -1)
-				return;
+            int adapterPos = viewHolder.getAdapterPosition();
+            if (adapterPos == -1)
+                return;
             if (module instanceof ItemClickPlugin)
                 ((ItemClickPlugin<I>) module).onItemClicked(list.get(adapterPos));
         }

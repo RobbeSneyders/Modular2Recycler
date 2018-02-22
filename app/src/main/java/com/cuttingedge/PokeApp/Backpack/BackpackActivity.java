@@ -10,16 +10,17 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.View;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.cuttingedge.PokeApp.BaseActivity;
 import com.cuttingedge.PokeApp.Pokedex;
 import com.cuttingedge.PokeApp.Pokemon;
 import com.cuttingedge.PokeApp.R;
+import com.cuttingedge.adapter2recycler.Adapter.ItemTouchHelperCallbackExample;
 import com.cuttingedge.adapter2recycler.Adapter.ModularAdapter;
 import com.cuttingedge.adapter2recycler.Adapter.ModularAdapterBuilder;
 import com.cuttingedge.adapter2recycler.ModularItem;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Robbe Sneyders
@@ -62,10 +63,12 @@ public class BackpackActivity extends BaseActivity {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        adapter = new ModularAdapterBuilder<>(recyclerView, list)
-                .setSwipeLeft(Color.RED, ResourcesCompat.getDrawable(getResources(), R.drawable.ic_delete_white_24dp, null))
-                .setSwipeRight(Color.GREEN, ResourcesCompat.getDrawable(getResources(), R.drawable.ic_cloud_upload_white_24dp, null))
-                .build();
+        ItemTouchHelperCallbackExample touchHelperCallback = new ItemTouchHelperCallbackExample(recyclerView);
+        touchHelperCallback.setSwipeLeft(Color.RED, ResourcesCompat.getDrawable(getResources(), R.drawable.ic_delete_white_24dp, null));
+        touchHelperCallback.setSwipeRight(Color.GREEN, ResourcesCompat.getDrawable(getResources(), R.drawable.ic_cloud_download_white_24dp, null));
+
+        adapter = new ModularAdapterBuilder<>(recyclerView, list, touchHelperCallback).build();
+        touchHelperCallback.setAdapter(adapter);
 
         new PokemonBackPackModule(this).bindToAdapter(adapter);
         new HeaderModule().bindToAdapter(adapter);

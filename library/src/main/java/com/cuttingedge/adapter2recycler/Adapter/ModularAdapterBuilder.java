@@ -1,14 +1,15 @@
 package com.cuttingedge.adapter2recycler.Adapter;
 
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.annotation.Size;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.ViewHolder;
-
-import java.util.List;
+import android.support.v7.widget.helper.ItemTouchHelper;
 
 import com.cuttingedge.adapter2recycler.ModularItem;
+
+import java.util.List;
 
 /**
  * Created by Robbe Sneyders
@@ -17,14 +18,12 @@ import com.cuttingedge.adapter2recycler.ModularItem;
  */
 public class ModularAdapterBuilder<I extends ModularItem> {
 
+    @NonNull
     RecyclerView recyclerView;
+    @Size(min = 0)
     List<I> list;
-
-    Drawable rightBackground = new ColorDrawable(Color.TRANSPARENT);
-    Drawable rightMark = new ColorDrawable(Color.TRANSPARENT);
-    Drawable leftBackground = new ColorDrawable(Color.TRANSPARENT);
-    Drawable leftMark = new ColorDrawable(Color.TRANSPARENT);
-
+    @Nullable
+    ItemTouchHelper.Callback touchHelperCallback;
 
     /**
      * Construct builder
@@ -32,39 +31,15 @@ public class ModularAdapterBuilder<I extends ModularItem> {
      * @param recyclerView to which adapter needs to be added.
      * @param list list of items to display. These items need to extend ModularItem.
      */
-    public ModularAdapterBuilder(RecyclerView recyclerView, List<I> list) {
+    public ModularAdapterBuilder(@NonNull RecyclerView recyclerView, @Size(min = 0) List<I> list) {
         this.recyclerView = recyclerView;
         this.list = list;
     }
 
-
-    /**
-     * Set attributes for swiping to the left.
-     *
-     * @param color color drawn behind view
-     * @param icon icon drawn behind view
-     * @return builder
-     */
-    public ModularAdapterBuilder<I> setSwipeLeft(int color, Drawable icon) {
-        rightBackground = new ColorDrawable(color);
-        rightMark = icon;
-        return this;
+    public ModularAdapterBuilder(RecyclerView recyclerView, List<I> list, @Nullable ItemTouchHelperBaseCallback touchHelperCallback) {
+        this(recyclerView, list);
+        this.touchHelperCallback = touchHelperCallback;
     }
-
-
-    /**
-     * Set attributes for swiping to the right.
-     *
-     * @param color color drawn behind view
-     * @param icon icon drawn behind view
-     * @return builder
-     */
-    public ModularAdapterBuilder<I> setSwipeRight(int color, Drawable icon) {
-        leftBackground = new ColorDrawable(color);
-        leftMark = icon;
-        return this;
-    }
-
 
     /**
      * Build the ModularAdapter.

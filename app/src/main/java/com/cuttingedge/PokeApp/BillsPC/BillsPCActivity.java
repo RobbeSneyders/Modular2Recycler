@@ -13,6 +13,7 @@ import com.cuttingedge.PokeApp.Pokedex;
 import com.cuttingedge.PokeApp.Pokemon;
 import com.cuttingedge.PokeApp.PokemonModule;
 import com.cuttingedge.PokeApp.R;
+import com.cuttingedge.adapter2recycler.Adapter.ItemTouchHelperCallbackExample;
 import com.cuttingedge.adapter2recycler.Adapter.ModularAdapter;
 import com.cuttingedge.adapter2recycler.Adapter.ModularAdapterBuilder;
 
@@ -48,10 +49,12 @@ public class BillsPCActivity extends BaseActivity {
 
         recyclerView.setLayoutManager(new GridLayoutManager(this, 4));
 
-        adapter = new ModularAdapterBuilder<>(recyclerView, pokemonList)
-                .setSwipeLeft(Color.RED, ResourcesCompat.getDrawable(getResources(), R.drawable.ic_delete_white_24dp, null))
-                .setSwipeRight(Color.GREEN, ResourcesCompat.getDrawable(getResources(), R.drawable.ic_cloud_download_white_24dp, null))
-                .build();
+        ItemTouchHelperCallbackExample touchHelperCallback = new ItemTouchHelperCallbackExample(recyclerView);
+        touchHelperCallback.setSwipeLeft(Color.RED, ResourcesCompat.getDrawable(getResources(), R.drawable.ic_delete_white_24dp, null));
+        touchHelperCallback.setSwipeRight(Color.GREEN, ResourcesCompat.getDrawable(getResources(), R.drawable.ic_cloud_download_white_24dp, null));
+
+        adapter = new ModularAdapterBuilder<>(recyclerView, pokemonList, touchHelperCallback).build();
+        touchHelperCallback.setAdapter(adapter);
 
         new PokemonBillsPCModule().bindToAdapter(adapter);
     }

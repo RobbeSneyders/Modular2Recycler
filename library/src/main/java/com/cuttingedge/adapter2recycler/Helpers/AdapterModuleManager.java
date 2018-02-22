@@ -3,11 +3,11 @@ package com.cuttingedge.adapter2recycler.Helpers;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.util.Log;
 
-import java.util.Map;
-import java.util.TreeMap;
-
 import com.cuttingedge.adapter2recycler.ModularItem;
 import com.cuttingedge.adapter2recycler.Modules.AdapterModule;
+
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Created by Robbe Sneyders
@@ -37,7 +37,7 @@ public class AdapterModuleManager<M extends AdapterModule<VH, I>, VH extends Vie
 			if (viewType == -1) {
 				types.put(getNewType(), module);
 			} else {
-				throw new IllegalStateException("Trying to add adapter module with items class which is already registered! " + newItemClass);
+				throw new IllegalStateException("Trying to add adapter module with itemclass which is already registered! " + newItemClass);
 			}
 		} else {
 			Log.w(TAG, "Attempting to add adapter module which is already added - " + module.getClass());

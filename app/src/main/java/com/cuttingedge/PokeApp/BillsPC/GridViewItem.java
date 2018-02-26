@@ -2,14 +2,13 @@ package com.cuttingedge.PokeApp.BillsPC;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.widget.ImageView;
 
 /**
  * Created by Robbe Sneyders
  *
  * This class generates a square cell in a gridview
  */
-public class GridViewItem extends ImageView {
+public class GridViewItem extends android.support.v7.widget.AppCompatImageView {
 
     public GridViewItem(Context context) {
         super(context);

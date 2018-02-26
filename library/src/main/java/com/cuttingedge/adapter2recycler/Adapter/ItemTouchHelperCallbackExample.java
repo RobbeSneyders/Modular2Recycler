@@ -14,7 +14,6 @@ public final class ItemTouchHelperCallbackExample extends ItemTouchHelperBaseCal
 
     private int xMarkMargin;
     private boolean lastWasSwiped;
-    private AnimatedAdapter adapter;
     private Drawable background;
     private Drawable rightBackground = new ColorDrawable(Color.TRANSPARENT);
     private Drawable rightMark = new ColorDrawable(Color.TRANSPARENT);

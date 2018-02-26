@@ -3,11 +3,11 @@ package com.cuttingedge.adapter2recycler.Modules;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.ViewGroup;
 
-import java.lang.reflect.ParameterizedType;
-import java.util.List;
-
 import com.cuttingedge.adapter2recycler.Adapter.ModularAdapter;
 import com.cuttingedge.adapter2recycler.ModularItem;
+
+import java.lang.reflect.ParameterizedType;
+import java.util.List;
 
 /**
  * Created by Robbe Sneyders
@@ -99,7 +99,8 @@ public abstract class AdapterModule<VH extends ViewHolder, I extends ModularItem
 	 *
 	 * @return used subclass of ModularItem.
 	 */
-	protected Class<I> returnedItemClass() {
+	@SuppressWarnings("WeakerAccess")
+    protected Class<I> returnedItemClass() {
 		Class c = getClass();
 		while (!(c.getGenericSuperclass() instanceof ParameterizedType)) {
 			c = c.getSuperclass();

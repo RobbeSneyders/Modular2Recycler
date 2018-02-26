@@ -3,6 +3,7 @@ package com.cuttingedge.adapter2recycler.Adapter;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.ViewHolder;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
@@ -314,7 +315,8 @@ public class ModularAdapter<VH extends ViewHolder, I extends ModularItem>  exten
 
         SwipePlugin<I> swipeListener = (SwipePlugin<I>) module;
         boolean undoEnabled = (swipeListener.getUndoDirs() & swipeDir) == swipeDir;
-        showSnackbar(swipeListener.onSwiped(pendingRemovalItem, swipeDir), undoEnabled);
+        String message = swipeListener.onSwiped(pendingRemovalItem, swipeDir);
+        showSnackbar(message, undoEnabled);
     }
 
 
@@ -346,6 +348,9 @@ public class ModularAdapter<VH extends ViewHolder, I extends ModularItem>  exten
      * Show snackbar with undo button.
      */
     private void showSnackbar(String message, boolean undoEnabled) {
+        if (TextUtils.isEmpty(message))
+            return;
+
         final Snackbar snackbar = Snackbar.make(recyclerView,
                 message, Snackbar.LENGTH_LONG);
 

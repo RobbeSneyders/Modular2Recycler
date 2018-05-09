@@ -36,7 +36,7 @@ public class ModularAdapterBuilder<I extends ModularItem> {
         this.list = list;
     }
 
-    public ModularAdapterBuilder(RecyclerView recyclerView, List<I> list, @Nullable ItemTouchHelperBaseCallback touchHelperCallback) {
+    public ModularAdapterBuilder(@NonNull RecyclerView recyclerView, List<I> list, @Nullable ItemTouchHelperBaseCallback touchHelperCallback) {
         this(recyclerView, list);
         this.touchHelperCallback = touchHelperCallback;
     }

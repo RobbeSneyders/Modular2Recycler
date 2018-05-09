@@ -14,7 +14,11 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 @SuppressWarnings("WeakerAccess")
 public abstract class AnimatedAdapter<VH extends ViewHolder> extends Adapter<VH> {
 
-    protected final ItemTouchHelper.Callback itemTouchHelperCallback;
+    protected ItemTouchHelper.Callback itemTouchHelperCallback;
+
+    public AnimatedAdapter(@Nullable ItemTouchHelper.Callback itemTouchHelperCallback) {
+        this.itemTouchHelperCallback = itemTouchHelperCallback;
+    }
 
     public AnimatedAdapter(RecyclerView recyclerView, @Nullable ItemTouchHelper.Callback itemTouchHelperCallback) {
         this.itemTouchHelperCallback = itemTouchHelperCallback;
@@ -23,6 +27,14 @@ public abstract class AnimatedAdapter<VH extends ViewHolder> extends Adapter<VH>
             mItemTouchHelper.attachToRecyclerView(recyclerView);
         }
     }
+
+    protected void attachToRecyclerView(RecyclerView recyclerView) {
+        if (itemTouchHelperCallback != null) {
+            ItemTouchHelper mItemTouchHelper = new ItemTouchHelper(itemTouchHelperCallback);
+            mItemTouchHelper.attachToRecyclerView(recyclerView);
+        }
+    }
+
 
     /**
      * Get the directions in which the touched item can be swiped.

@@ -1,5 +1,6 @@
 package com.cuttingedge.adapter2recycler.Adapter;
 
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.ViewHolder;
@@ -17,6 +18,7 @@ import com.cuttingedge.adapter2recycler.Modules.ItemClickPlugin;
 import com.cuttingedge.adapter2recycler.Modules.ItemLongClickPlugin;
 import com.cuttingedge.adapter2recycler.Modules.SwipePlugin;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -26,9 +28,9 @@ import java.util.List;
  * Adapter with all modular logic.
  */
 @SuppressWarnings("unused")
-public class ModularAdapter<VH extends ViewHolder, I extends ModularItem>  extends AnimatedAdapter<VH> {
+public class ModularAdapter<VH extends ViewHolder, I extends ModularItem> extends AnimatedAdapter<VH> {
 
-    private final RecyclerView recyclerView;
+    private RecyclerView recyclerView;
     private List<I> list;
 
     // Last removed item saved so removal can be undone
@@ -39,6 +41,10 @@ public class ModularAdapter<VH extends ViewHolder, I extends ModularItem>  exten
 
     private AdapterModuleManager<AdapterModule<VH, I>, VH, I> adapterModuleManager;
 
+    public ModularAdapter() {
+        super(null);
+        adapterModuleManager = new AdapterModuleManager<>();
+    }
 
     /**
      * This adapter is built via a builder class.
@@ -53,6 +59,14 @@ public class ModularAdapter<VH extends ViewHolder, I extends ModularItem>  exten
         adapterModuleManager = new AdapterModuleManager<>();
 
         builder.recyclerView.setAdapter(this);
+    }
+
+    public void attachToRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.attachToRecyclerView(recyclerView);
+        if (this.list == null)
+            this.list = new ArrayList<>();
+        this.recyclerView = recyclerView;
+        recyclerView.setAdapter(this);
     }
 
     /**

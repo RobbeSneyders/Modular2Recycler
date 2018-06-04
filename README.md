@@ -13,25 +13,6 @@ It also adds extra features:
 <img src="docs/art/Swipe.gif" alt="Item click" width="200px">
 <img src="docs/art/Drag_drop.gif" alt="Item click" width="200px">
 
-## Design Pattern
-
-This library uses the approach of [Modular design](https://en.wikipedia.org/wiki/Modular_design), in which a system is subdivided into modular, reusable components.
-A detailed explanation about the architecture of this library can be read [here](https://robbesneyders.github.io/Modular2Recycler).
-
-The ² in Modular²Recycler denotes the modularity of the adapter on two separate levels.
-
-### First Level
-
-Instead of creating one huge adapter to populate a `RecyclerView` with data, one __AdapterModule__ is created for each different viewtype.
-
-<img src="docs/art/Modular_level_1.png" alt="Modular level 1" width="500">
-
-### Second Level
-
-Extra funcionality can be added to these __AdapterModules__ by implementing __plugins__ provided by this library.
-
-<img src="docs/art/Modular_level_2.png" alt="Modular level 2" width="300">
-
 ## Dependencies
 
 This libary can be added to your project by using [JitPack](https://jitpack.io/).
@@ -48,10 +29,10 @@ allprojects {
 ```
 
 Add this library as dependency to your project:
-
+![Release](https://jitpack.io/v/maxxx/Modular2Recycler.svg)
 ```groovy
 dependencies {
-        compile 'com.github.RobbeSneyders:Modular2Recycler:v1.0.2'
+        compile 'com.github.RobbeSneyders:Modular2Recycler:v1.x'
 }
 ```
 

@@ -8,7 +8,7 @@ import com.cuttingedge.PokeApp.BaseActivity;
 import com.cuttingedge.PokeApp.Pokedex;
 import com.cuttingedge.PokeApp.Pokemon;
 import com.cuttingedge.PokeApp.R;
-import com.cuttingedge.adapter2recycler.Adapter.ItemTouchHelperCallbackExample;
+import com.cuttingedge.PokeApp.ItemTouchHelperCallbackExample;
 import com.cuttingedge.adapter2recycler.Adapter.ModularAdapter;
 import com.cuttingedge.adapter2recycler.Adapter.ModularAdapterBuilder;
 import com.cuttingedge.adapter2recycler.ModularItem;

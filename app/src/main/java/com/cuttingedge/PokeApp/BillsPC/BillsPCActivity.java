@@ -9,7 +9,7 @@ import com.cuttingedge.PokeApp.Pokedex;
 import com.cuttingedge.PokeApp.Pokemon;
 import com.cuttingedge.PokeApp.PokemonModule;
 import com.cuttingedge.PokeApp.R;
-import com.cuttingedge.adapter2recycler.Adapter.ItemTouchHelperCallbackExample;
+import com.cuttingedge.PokeApp.ItemTouchHelperCallbackExample;
 import com.cuttingedge.adapter2recycler.Adapter.ModularAdapter;
 import com.cuttingedge.adapter2recycler.Adapter.ModularAdapterBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;

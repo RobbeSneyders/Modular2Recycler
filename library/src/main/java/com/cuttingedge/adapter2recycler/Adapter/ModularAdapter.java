@@ -1,9 +1,5 @@
 package com.cuttingedge.adapter2recycler.Adapter;
 
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -17,10 +13,15 @@ import com.cuttingedge.adapter2recycler.Modules.DragAndDropPlugin;
 import com.cuttingedge.adapter2recycler.Modules.ItemClickPlugin;
 import com.cuttingedge.adapter2recycler.Modules.ItemLongClickPlugin;
 import com.cuttingedge.adapter2recycler.Modules.SwipePlugin;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 
 /**
  * Created by Robbe Sneyders

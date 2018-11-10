@@ -1,7 +1,5 @@
 package com.cuttingedge.PokeApp;
 
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +9,9 @@ import android.widget.TextView;
 import com.cuttingedge.adapter2recycler.Modules.AdapterModule;
 import com.cuttingedge.adapter2recycler.Modules.DragAndDropPlugin;
 import com.cuttingedge.adapter2recycler.Modules.SwipePlugin;
+
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Created by Robbe Sneyders

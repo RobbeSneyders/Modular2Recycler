@@ -1,4 +1,14 @@
 buildscript {
+    ext {
+        androidTargetSdkVersion = 28
+        androidCompileSdkVersion = 28
+        androidMinSdkVersion = 15
+
+        androidAppCompatVersion = "1.0.2"
+        androidAnnotationVersion = "1.0.0"
+        androidRecyclerViewVersion = "1.0.0"
+        androidMaterialVersion = "1.0.0"
+    }
     repositories {
         jcenter()
         google()

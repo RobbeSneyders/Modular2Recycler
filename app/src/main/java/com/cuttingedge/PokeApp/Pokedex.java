@@ -1,7 +1,6 @@
 package com.cuttingedge.PokeApp;
 
 import android.content.Context;
-import android.support.v4.content.res.ResourcesCompat;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -13,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
+import androidx.core.content.res.ResourcesCompat;
 
 /**
  * Created by Robbe on 19/08/2016.

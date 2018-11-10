@@ -1,10 +1,10 @@
 package com.cuttingedge.PokeApp.Backpack;
 
-import android.support.v7.util.DiffUtil;
-
 import com.cuttingedge.adapter2recycler.ModularItem;
 
 import java.util.List;
+
+import androidx.recyclerview.widget.DiffUtil;
 
 /**
  * Created by Robbe Sneyders.

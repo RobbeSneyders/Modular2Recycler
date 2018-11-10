@@ -8,7 +8,7 @@ import android.util.AttributeSet;
  *
  * This class generates a square cell in a gridview
  */
-public class GridViewItem extends android.support.v7.widget.AppCompatImageView {
+public class GridViewItem extends androidx.appcompat.widget.AppCompatImageView {
 
     public GridViewItem(Context context) {
         super(context);

@@ -2,10 +2,6 @@ package com.cuttingedge.PokeApp.BillsPC;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.content.res.ResourcesCompat;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.cuttingedge.PokeApp.BaseActivity;
@@ -16,8 +12,13 @@ import com.cuttingedge.PokeApp.R;
 import com.cuttingedge.adapter2recycler.Adapter.ItemTouchHelperCallbackExample;
 import com.cuttingedge.adapter2recycler.Adapter.ModularAdapter;
 import com.cuttingedge.adapter2recycler.Adapter.ModularAdapterBuilder;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
+
+import androidx.core.content.res.ResourcesCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Created by Robbe Sneyders

@@ -1,6 +1,5 @@
 package com.cuttingedge.PokeApp.Backpack;
 
-import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +7,8 @@ import android.widget.TextView;
 
 import com.cuttingedge.PokeApp.R;
 import com.cuttingedge.adapter2recycler.Modules.AdapterModule;
+
+import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 
 /**
  * Created by Robbe Sneyders

@@ -1,6 +1,5 @@
 package com.cuttingedge.PokeApp.BillsPC;
 
-import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +10,8 @@ import com.cuttingedge.PokeApp.PokemonModule;
 import com.cuttingedge.PokeApp.R;
 
 import java.util.List;
+
+import androidx.recyclerview.widget.ItemTouchHelper;
 
 /**
  * Created by Robbe Sneyders

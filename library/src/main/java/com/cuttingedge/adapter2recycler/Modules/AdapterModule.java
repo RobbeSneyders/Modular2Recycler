@@ -1,6 +1,5 @@
 package com.cuttingedge.adapter2recycler.Modules;
 
-import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.ViewGroup;
 
 import com.cuttingedge.adapter2recycler.Adapter.ModularAdapter;
@@ -8,6 +7,8 @@ import com.cuttingedge.adapter2recycler.ModularItem;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
+
+import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 
 /**
  * Created by Robbe Sneyders

@@ -1,7 +1,6 @@
 package com.cuttingedge.PokeApp.Backpack;
 
 import android.content.Context;
-import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +14,8 @@ import com.cuttingedge.adapter2recycler.Modules.ItemClickPlugin;
 import com.cuttingedge.adapter2recycler.Modules.ItemLongClickPlugin;
 
 import java.util.List;
+
+import androidx.recyclerview.widget.ItemTouchHelper;
 
 /**
  * Created by Robbe Sneyders

@@ -1,20 +1,20 @@
 buildscript {
     ext {
-        androidTargetSdkVersion = 28
-        androidCompileSdkVersion = 28
+        androidTargetSdkVersion = 29
+        androidCompileSdkVersion = 30
         androidMinSdkVersion = 15
 
         androidAppCompatVersion = "1.1.0"
-        androidAnnotationVersion = "1.0.0"
-        androidRecyclerViewVersion = "1.1.0"
-        androidMaterialVersion = "1.0.0"
+        androidAnnotationVersion = "1.1.0"
+        androidRecyclerViewVersion = "1.2.0"
+        androidMaterialVersion = "1.2.1"
     }
     repositories {
         jcenter()
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.3'
+        classpath 'com.android.tools.build:gradle:4.1.3'
     }
 }
 

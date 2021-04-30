@@ -6,6 +6,10 @@ import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import com.cuttingedge.adapter2recycler.Helpers.AdapterModuleManager;
 import com.cuttingedge.adapter2recycler.ModularItem;
 import com.cuttingedge.adapter2recycler.Modules.AdapterModule;
@@ -14,10 +18,6 @@ import com.cuttingedge.adapter2recycler.Modules.ItemClickPlugin;
 import com.cuttingedge.adapter2recycler.Modules.ItemLongClickPlugin;
 import com.cuttingedge.adapter2recycler.Modules.SwipePlugin;
 import com.google.android.material.snackbar.Snackbar;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -187,9 +187,14 @@ public class ModularAdapter<VH extends ViewHolder, I extends ModularItem> extend
      */
     @Override
     public void onViewAttachedToWindow(VH viewHolder) {
-        viewHolder.itemView.setOnClickListener(onClickListener);
-        viewHolder.itemView.setOnLongClickListener(onLongClickListener);
-        adapterModuleManager.getAdapterModule(viewHolder.getItemViewType()).onViewAttachedToWindow(viewHolder);
+        AdapterModule<VH, I> module = adapterModuleManager.getAdapterModule(viewHolder.getItemViewType());
+
+        if (module.isHandlingClicks()) {
+            viewHolder.itemView.setOnClickListener(onClickListener);
+            viewHolder.itemView.setOnLongClickListener(onLongClickListener);
+        }
+
+        module.onViewAttachedToWindow(viewHolder);
     }
 
 

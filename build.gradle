@@ -5,7 +5,7 @@ buildscript {
         androidMinSdkVersion = 15
 
         androidAppCompatVersion = "1.1.0"
-        androidAnnotationVersion = "1.2.0"
+        androidAnnotationVersion = "1.1.0"
         androidRecyclerViewVersion = "1.2.0"
         androidMaterialVersion = "1.2.1"
     }

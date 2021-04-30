@@ -2,11 +2,11 @@ package com.cuttingedge.adapter2recycler.Modules;
 
 import android.view.ViewGroup;
 
-import com.cuttingedge.adapter2recycler.Adapter.ModularAdapter;
-import com.cuttingedge.adapter2recycler.ModularItem;
-
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
+
+import com.cuttingedge.adapter2recycler.Adapter.ModularAdapter;
+import com.cuttingedge.adapter2recycler.ModularItem;
 
 import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 
@@ -17,10 +17,12 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder;
  */
 @SuppressWarnings("unused")
 public abstract class AdapterModule<VH extends ViewHolder, I extends ModularItem> {
-    private Class<I> itemClass;
+    private final Class<I> itemClass;
+    private final boolean isHandlingClicks;
 
     public AdapterModule() {
         itemClass = returnedItemClass();
+        isHandlingClicks = checkHandleClicks();
     }
 
     /**
@@ -93,6 +95,13 @@ public abstract class AdapterModule<VH extends ViewHolder, I extends ModularItem
      */
     public void onViewRecycled(VH viewHolder) {}
 
+	public Class<I> getItemClass() {
+		return itemClass;
+	}
+
+	public boolean isHandlingClicks() {
+    	return isHandlingClicks;
+	}
 
 	/**
 	 * Use reflection to find used subclass of ModularItem. Called once in constructor.
@@ -111,7 +120,7 @@ public abstract class AdapterModule<VH extends ViewHolder, I extends ModularItem
 		return (Class<I>) parameterizedType.getActualTypeArguments()[1];
 	}
 
-    public Class<I> getItemClass() {
-        return itemClass;
-    }
+	protected boolean checkHandleClicks() {
+		return this instanceof ItemClickPlugin || this instanceof ItemLongClickPlugin;
+	}
 }

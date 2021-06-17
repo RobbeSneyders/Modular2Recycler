@@ -1,8 +1,8 @@
 package com.cuttingedge.adapter2recycler.Adapter;
 
-import com.cuttingedge.adapter2recycler.ModularItem;
-
 import java.util.List;
+
+import com.cuttingedge.adapter2recycler.ModularItem;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,10 +20,13 @@ public class ModularAdapterBuilder<I extends ModularItem> {
 
     @NonNull
     RecyclerView recyclerView;
+    @NonNull
     @Size(min = 0)
     List<I> list;
     @Nullable
     ItemTouchHelper.Callback touchHelperCallback;
+    @Nullable
+    ItemTouchHelper itemTouchHelper;
 
     /**
      * Construct builder
@@ -31,14 +34,25 @@ public class ModularAdapterBuilder<I extends ModularItem> {
      * @param recyclerView to which adapter needs to be added.
      * @param list list of items to display. These items need to extend ModularItem.
      */
-    public ModularAdapterBuilder(@NonNull RecyclerView recyclerView, @Size(min = 0) List<I> list) {
+    public ModularAdapterBuilder(@NonNull RecyclerView recyclerView, @NonNull @Size(min = 0) List<I> list) {
         this.recyclerView = recyclerView;
         this.list = list;
     }
 
-    public ModularAdapterBuilder(@NonNull RecyclerView recyclerView, List<I> list, @Nullable ItemTouchHelperBaseCallback touchHelperCallback) {
+    public ModularAdapterBuilder(@NonNull RecyclerView recyclerView,
+                                 @NonNull List<I> list,
+                                 @Nullable ItemTouchHelperBaseCallback touchHelperCallback) {
         this(recyclerView, list);
         this.touchHelperCallback = touchHelperCallback;
+    }
+
+    public ModularAdapterBuilder(@NonNull RecyclerView recyclerView,
+                                 @NonNull List<I> list,
+                                 @NonNull ItemTouchHelperBaseCallback touchHelperCallback,
+                                 @NonNull ItemTouchHelper itemTouchHelper) {
+        this(recyclerView, list);
+        this.touchHelperCallback = touchHelperCallback;
+        this.itemTouchHelper = itemTouchHelper;
     }
 
     /**

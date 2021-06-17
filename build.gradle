@@ -4,17 +4,17 @@ buildscript {
         androidCompileSdkVersion = 30
         androidMinSdkVersion = 15
 
-        androidAppCompatVersion = "1.1.0"
+        androidAppCompatVersion = "1.3.0"
         androidAnnotationVersion = "1.1.0"
         androidRecyclerViewVersion = "1.2.0"
-        androidMaterialVersion = "1.2.1"
+        androidMaterialVersion = "1.3.0"
     }
     repositories {
         jcenter()
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.1.3'
+        classpath 'com.android.tools.build:gradle:4.2.1'
     }
 }
 

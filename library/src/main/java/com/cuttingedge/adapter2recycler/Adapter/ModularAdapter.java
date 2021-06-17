@@ -40,7 +40,7 @@ public class ModularAdapter<VH extends ViewHolder, I extends ModularItem> extend
     private int pendingRemovalPosition;
     private int pendingRemovalSwipeDir;
 
-    private AdapterModuleManager<AdapterModule<VH, I>, VH, I> adapterModuleManager;
+    private final AdapterModuleManager<AdapterModule<VH, I>, VH, I> adapterModuleManager;
 
     public ModularAdapter() {
         super(null);
@@ -53,7 +53,7 @@ public class ModularAdapter<VH extends ViewHolder, I extends ModularItem> extend
      * @param builder builder used to construct this adapter.
      */
     public ModularAdapter(ModularAdapterBuilder<I> builder) {
-        super(builder.recyclerView, builder.touchHelperCallback);
+        super(builder.recyclerView, builder.touchHelperCallback, builder.itemTouchHelper);
         this.recyclerView = builder.recyclerView;
         this.list = builder.list;
 

@@ -4,21 +4,22 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.cuttingedge.PokeApp.BaseActivity;
+import com.cuttingedge.PokeApp.ItemTouchHelperCallbackExample;
 import com.cuttingedge.PokeApp.Pokedex;
 import com.cuttingedge.PokeApp.Pokemon;
 import com.cuttingedge.PokeApp.R;
-import com.cuttingedge.PokeApp.ItemTouchHelperCallbackExample;
 import com.cuttingedge.adapter2recycler.Adapter.ModularAdapter;
 import com.cuttingedge.adapter2recycler.Adapter.ModularAdapterBuilder;
 import com.cuttingedge.adapter2recycler.ModularItem;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.ViewHolder;
@@ -67,8 +68,9 @@ public class BackpackActivity extends BaseActivity {
         ItemTouchHelperCallbackExample touchHelperCallback = new ItemTouchHelperCallbackExample(recyclerView);
         touchHelperCallback.setSwipeLeft(Color.RED, ResourcesCompat.getDrawable(getResources(), R.drawable.ic_delete_white_24dp, null));
         touchHelperCallback.setSwipeRight(Color.GREEN, ResourcesCompat.getDrawable(getResources(), R.drawable.ic_cloud_download_white_24dp, null));
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(touchHelperCallback);
 
-        adapter = new ModularAdapterBuilder<>(recyclerView, list, touchHelperCallback).build();
+        adapter = new ModularAdapterBuilder<>(recyclerView, list, touchHelperCallback, itemTouchHelper).build();
         touchHelperCallback.setAdapter(adapter);
 
         new PokemonBackPackModule(this).bindToAdapter(adapter);

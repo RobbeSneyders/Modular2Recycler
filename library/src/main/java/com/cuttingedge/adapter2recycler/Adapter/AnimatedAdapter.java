@@ -1,10 +1,10 @@
 package com.cuttingedge.adapter2recycler.Adapter;
 
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.Adapter;
 import androidx.recyclerview.widget.RecyclerView.ViewHolder;
-import androidx.recyclerview.widget.ItemTouchHelper;
 
 /**
  * Created by Robbe Sneyders
@@ -22,9 +22,17 @@ public abstract class AnimatedAdapter<VH extends ViewHolder> extends Adapter<VH>
 
     public AnimatedAdapter(RecyclerView recyclerView, @Nullable ItemTouchHelper.Callback itemTouchHelperCallback) {
         this.itemTouchHelperCallback = itemTouchHelperCallback;
-        if (itemTouchHelperCallback != null) {
-            ItemTouchHelper mItemTouchHelper = new ItemTouchHelper(itemTouchHelperCallback);
-            mItemTouchHelper.attachToRecyclerView(recyclerView);
+        attachToRecyclerView(recyclerView);
+    }
+
+    public AnimatedAdapter(RecyclerView recyclerView,
+                           @Nullable ItemTouchHelper.Callback itemTouchHelperCallback,
+                           @Nullable ItemTouchHelper itemTouchHelper) {
+        this.itemTouchHelperCallback = itemTouchHelperCallback;
+        if (itemTouchHelper != null) {
+            itemTouchHelper.attachToRecyclerView(recyclerView);
+        } else {
+            attachToRecyclerView(recyclerView);
         }
     }
 
